@@ -1,9 +1,0 @@
-.header {
-  background: #fff
-    linear-gradient(hsla(214, 61%, 25%, 0.05), hsla(214, 61%, 25%, 0.05));
-  padding: 0.25em;
-}
-.header .header-toolbar {
-  min-height: 2.5em;
-  padding-right: 0;
-}

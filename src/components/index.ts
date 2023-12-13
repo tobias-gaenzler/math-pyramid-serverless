@@ -1,5 +1,10 @@
-import Header from "./Header/Header"
+import MathPyramidField, { MathPyramidFieldHandler } from "./MathPyramidField/MathPyramidField"
+import MathPyramidPractice from "./MathPyramidPractice/MathPyramidPractice"
+import { SuccessDialog } from "./SuccessDialog/SuccessDialog"
 
 export {
-  Header
+  MathPyramidField,
+  MathPyramidPractice,
+  SuccessDialog
 }
+export type { MathPyramidFieldHandler as MathPyramidInputFieldHandler }

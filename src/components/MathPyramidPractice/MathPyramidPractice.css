@@ -1,0 +1,15 @@
+/* Chrome, Safari, Edge, Opera */
+.math-pyramid input::-webkit-outer-spin-button,
+.math-pyramid input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.math-pyramid input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.row {
+  display: inline-flex;
+}

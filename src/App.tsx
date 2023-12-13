@@ -1,11 +1,11 @@
 import { type ReactElement, StrictMode } from 'react'
 import './App.css'
-import Header from './components/Header/Header'
+import { MathPyramidPractice } from './components'
 
 function App (): ReactElement<any, any> {
   return (
         <StrictMode>
-            <Header />
+            <MathPyramidPractice size={3} maxValue={100} />
         </StrictMode>
   )
 }

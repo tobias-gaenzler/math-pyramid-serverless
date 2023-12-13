@@ -1,23 +1,20 @@
-import React from "react";
-import "./Header.css";
+import React from 'react'
+import './Header.css'
 import {
   Box,
   AppBar,
   Toolbar,
   CssBaseline
-} from "@mui/material";
+} from '@mui/material'
 
-type Props = {};
-const Header: React.FC<Props> = () => {
-  return (
+interface Props {}
+const Header: React.FC<Props> = () => (
     <Box className="header" sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <CssBaseline />
-        <Toolbar className="header-toolbar">
-        </Toolbar>
-      </AppBar>
+        <AppBar position='static'>
+            <CssBaseline />
+            <Toolbar className="header-toolbar" />
+        </AppBar>
     </Box>
-  );
-};
+)
 
-export default Header;
+export default Header

@@ -1,7 +1,8 @@
-# Math Pyramid
+# Math Pyramid Serverless
 
 ![Math Pyramid](https://github.com/tobias-gaenzler/math-pyramid-react/blob/main/public/help_start.jpg?raw=true)
 React app for math pyramid, a math exercise to train basic addition/subtraction.
+In contrast to [math-pyramid-react](https://github.com/tobias-gaenzler/math-pyramid-react), this repo uses AWS as a backend.
 
 ## Technical Information
 

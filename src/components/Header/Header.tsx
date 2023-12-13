@@ -7,10 +7,9 @@ import {
   CssBaseline
 } from '@mui/material'
 
-interface Props {}
-const Header: React.FC<Props> = () => (
+const Header: React.FC = () => (
     <Box className="header" sx={{ flexGrow: 1 }}>
-        <AppBar position='static'>
+        <AppBar position="static">
             <CssBaseline />
             <Toolbar className="header-toolbar" />
         </AppBar>

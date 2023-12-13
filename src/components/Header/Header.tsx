@@ -6,7 +6,6 @@ import {
   Toolbar,
   CssBaseline
 } from "@mui/material";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 type Props = {};
 const Header: React.FC<Props> = () => {

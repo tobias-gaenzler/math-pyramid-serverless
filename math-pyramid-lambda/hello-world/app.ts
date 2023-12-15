@@ -8,20 +8,20 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
     };
     try {
         const queryParameters: Map<string, number> = getQueryParameters(event);
-        const solutionValues: number[] = createRandomSolution(
+        const solution: number[] = createRandomSolution(
             queryParameters.get('size')!,
             queryParameters.get('maxValue')!,
         );
-        const startValues: number[] = getUniquelySolvableRandomStartValues(solutionValues);
+        const startValues: number[] = getUniquelySolvableRandomStartValues(solution);
         console.log(`Start values: ${JSON.stringify(startValues)}`);
-        console.log(`Solution values: ${JSON.stringify(solutionValues)}`);
+        console.log(`Solution values: ${JSON.stringify(solution)}`);
         return {
             statusCode: 200,
             headers: HEADERS,
             body: JSON.stringify({
                 size: queryParameters.get('size'),
                 startValues: startValues,
-                solutionValues: solutionValues,
+                solution: solution,
             }),
         };
     } catch (err) {

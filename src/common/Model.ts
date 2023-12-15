@@ -1,8 +1,8 @@
 class Model {
+  size: number;
   solution: number[];
   startValues: number[];
   userInput: number[];
-  size: number;
   constructor(
     size: number,
     solution: number[],

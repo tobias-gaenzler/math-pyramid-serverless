@@ -107,7 +107,6 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
       .get<MathPyramidModelData>(`http://localhost:3001/hello?size=${size}&maxValue=${maxValue}`)
       //.get<MathPyramidModelData>('https://jsonplaceholder.typicode.com/todos/1')
       .then((response) => {
-        console.log(JSON.stringify(response.data))
         if (response !== null && response.data !== null && response.data.size !== null && response.data.solution !== null && response.data.startValues !== null) {
           setModel(new Model(response.data.size, response.data.solution, response.data.startValues))
           setShowErrorMessage(false)

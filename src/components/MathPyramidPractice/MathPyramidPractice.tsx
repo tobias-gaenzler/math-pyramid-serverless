@@ -23,7 +23,7 @@ interface MathPyramidModelData {
   startValues: number[];
 }
 
-const errorMessage = 'Could not retrieve math pyramid data from the API. Please try again later.'
+const errorMessage = 'Error while retrieving math pyramid data from the API. Please try again later.'
 
 const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValue }: MathPyramidPracticeProps) => {
   const [model, setModel] = useState<(Model | null)>();
@@ -105,19 +105,20 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
   ): void {
     axios
       .get<MathPyramidModelData>(`http://localhost:3001/hello?size=${size}&maxValue=${maxValue}`)
+      //.get<MathPyramidModelData>('https://jsonplaceholder.typicode.com/todos/1')
       .then((response) => {
-        if (response && response.data) {
-          setModel(new Model(response.data.size, response.data.solution, response.data.startValues));
-          setShowErrorMessage(false);
+        console.log(JSON.stringify(response.data))
+        if (response !== null && response.data !== null && response.data.size !== null && response.data.solution !== null && response.data.startValues !== null) {
+          setModel(new Model(response.data.size, response.data.solution, response.data.startValues))
+          setShowErrorMessage(false)
         } else {
-          throw new Error(`Invalid response from math pyramid api endpoint: ${JSON.stringify(response)}.`);
+          throw new Error(`Invalid response from math pyramid api endpoint: ${JSON.stringify(response)}.`)
         }
       })
       .catch((error) => {
-        console.error(`Could not get math pyramid data from API: ${error}`);
-        setShowErrorMessage(true);
-      });
-    ;
+        console.error(`Could not get math pyramid data from API: ${error}`)
+        setShowErrorMessage(true)
+      })
   }
 
   return showErrorMessage ? (

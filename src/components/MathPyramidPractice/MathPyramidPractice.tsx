@@ -105,7 +105,6 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
   ): void {
     axios
       .get<MathPyramidModelData>(`http://localhost:3001/hello?size=${size}&maxValue=${maxValue}`)
-      // .get<MathPyramidModelData>(`https://sajoteheca.execute-api.eu-central-1.amazonaws.com/Stage/hello?size=${size}&maxValue=${maxValue}`)
       .then((response) => {
         if (response && response.data) {
           setModel(new Model(response.data.size, response.data.solution, response.data.startValues));

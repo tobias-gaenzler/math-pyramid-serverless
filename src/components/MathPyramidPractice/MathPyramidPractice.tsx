@@ -104,7 +104,7 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
     maxValue: number
   ): void {
     axios
-      .get<MathPyramidModelData>(`http://localhost:3001/hello?size=${size}&maxValue=${maxValue}`)
+      .get<MathPyramidModelData>(`http://localhosttt:3001/hello?size=${size}&maxValue=${maxValue}`)
       //.get<MathPyramidModelData>('https://jsonplaceholder.typicode.com/todos/1')
       .then((response) => {
         if (response !== null && response.data !== null && response.data.size !== null && response.data.solution !== null && response.data.startValues !== null) {
@@ -121,12 +121,7 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
   }
 
   return showErrorMessage ? (
-    <Stack
-      spacing={4}
-      justifyContent="center"
-      alignItems="center"
-      className="math-pyramid"
-    >
+    <Stack spacing={4} justifyContent="center" alignItems="center">
       <div>
         {errorMessage}
       </div>

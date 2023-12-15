@@ -71,9 +71,9 @@ const MathPyramidField: React.FC<Props> = ({
     <TextField
       className={className}
       inputProps={{ type: "number" }}
-      onKeyPress={(event) => {
-        // allow only numbers
-        if (!/[0-9]/.test(event.key)) {
+      onKeyDown={(event) => {
+        // allow only numbers and Backspace
+        if (!/[0-9]/.test(event.key) && !/Backspace/.test(event.key)) {
           event.preventDefault()
         }
       }}

@@ -2,6 +2,10 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { NDArray, matrix } from 'vectorious';
 
 export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    const HEADERS = {
+        'Content-Type': 'application/json',
+        'X-Custom-Header': 'application/json'
+    };
     try {
         const queryParameters: Map<string, number> = getQueryParameters(event);
         const solutionValues: number[] = createRandomSolution(
@@ -9,21 +13,23 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
             queryParameters.get('maxValue')!,
         );
         const startValues: number[] = getUniquelySolvableRandomStartValues(solutionValues);
+        console.log(`Start values: ${JSON.stringify(startValues)}`);
+        console.log(`Solution values: ${JSON.stringify(solutionValues)}`);
         return {
             statusCode: 200,
+            headers: HEADERS,
             body: JSON.stringify({
-                size: 3,
+                size: queryParameters.get('size'),
                 startValues: startValues,
                 solutionValues: solutionValues,
             }),
         };
     } catch (err) {
-        console.log(err);
+        console.error(err);
         return {
             statusCode: 500,
-            body: JSON.stringify({
-                message: err,
-            }),
+            headers: HEADERS,
+            body: `{ "message": "${err}" }`
         };
     }
 
@@ -211,39 +217,51 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
             ['size', 3],
             ['maxValue', 100],
         ]);
-        if (
-            event.queryStringParameters !== null &&
-            event.queryStringParameters !== undefined &&
-            event.queryStringParameters?.size !== null &&
-            event.queryStringParameters?.maxValue !== null
-        ) {
-            console.log(`queryStringParameters: ${JSON.stringify(event.queryStringParameters)}`);
-            const size = Number(event.queryStringParameters!.size);
-            const maxValue = Number(event.queryStringParameters!.maxValue);
-            validateQueryParameters(size, maxValue);
-            queryParameters.set('size', size);
-            queryParameters.set('maxValue', maxValue);
-            console.log(`Using the following values from query parameters: ${[...queryParameters.entries()]}`);
-        } else {
-            console.log('Using default values: size=3, maxValue=100');
+        const size: (string | undefined) = event.queryStringParameters?.size;
+        const maxValue: (string | undefined) = event.queryStringParameters?.maxValue;
+        if (isDefined(size)) {
+            if (isValidSize(size)) {
+                queryParameters.set('size', Number(event.queryStringParameters!.size));
+            } else {
+                throw new Error(`Invalid size: size must be between 3 and 10. Current value:${size}`);
+            }
         }
+        if (isDefined(maxValue)) {
+            if (isValidMaxValue(maxValue)) {
+                queryParameters.set('maxValue', Number(event.queryStringParameters!.maxValue));
+            } else {
+                throw new Error(`Invalid maxValue: maxValue must be between 100 and 1000000. Current value:${maxValue}`);
+            }
+        }
+
+        console.log(`Using the following values: ${[...queryParameters.entries()]}`);
         return queryParameters;
     }
 
-    function validateQueryParameters(size: number, maxValue: number) {
-        if (
-            size == null ||
-            !Number.isSafeInteger(size) ||
-            maxValue == null ||
-            !Number.isSafeInteger(maxValue) ||
-            size < 3 ||
-            size > 10 ||
-            maxValue < 100 ||
-            maxValue > 1000000
-        ) {
-            throw new Error(
-                `Invalid values: size must be between 3 and 10 and maxValue betwee 100 and 1000000. Current values: size ${size}, maxValue ${maxValue}`,
-            );
+    function isDefined(size: string | undefined): boolean {
+        return size !== null && size !== undefined;
+    }
+
+    function isValidSize(size: string | undefined): boolean {
+        try {
+            if (size === undefined) {
+                return false;
+            }
+            const parsedSize: number = parseInt(size);
+            return (parsedSize >= 3 && parsedSize <= 10);
+        } catch (error) {
+            return false;
+        }
+    }
+    function isValidMaxValue(maxValue: string | undefined): boolean {
+        try {
+            if (maxValue === undefined) {
+                return false;
+            }
+            const parsedMaxValue: number = parseInt(maxValue);
+            return (parsedMaxValue >= 100 && parsedMaxValue <= 1000000);
+        } catch (error) {
+            return false;
         }
     }
 };

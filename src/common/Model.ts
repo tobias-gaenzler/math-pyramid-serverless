@@ -1,5 +1,3 @@
-import { MathPyramidCalculator } from "../service/MathPyramidCalculator";
-
 class Model {
   solution: number[];
   startValues: number[];
@@ -7,12 +5,12 @@ class Model {
   size: number;
   constructor(
     size: number,
-    maxValue: number,
-    calculator: MathPyramidCalculator
+    solution: number[],
+    startValues: number[]
   ) {
     this.size = size;
-    this.solution = calculator.createRandomSolution(size, maxValue);
-    this.startValues = calculator.getRandomStartValues(this.solution, size);
+    this.solution = solution; ;
+    this.startValues = startValues;
     this.userInput = Object.assign([], this.startValues);
   }
 

@@ -34,6 +34,11 @@ const MathPyramidField: React.FC<Props> = ({
 
   // set field color when input changes
   useEffect(() => {
+    //console.log(`In useLayoutEffect of field ${index}, ${JSON.stringify(model)}`)
+    if (!model || !model.solution) {
+      //setClassName("pyramid-field disabled")
+      return
+    }
     const expectsUserInput = (getStartValue() === "");
     if (expectsUserInput) {
       if (value === "") {
@@ -51,11 +56,18 @@ const MathPyramidField: React.FC<Props> = ({
 
   // initialize field when model changes 
   // useLayoutEffect instead of useEffect, to prevent that field is red (caused by old value)
-  useLayoutEffect (() => {
+  useLayoutEffect(() => {
     let startValue = getStartValue()
     setValue(startValue)
-    setDisabled(startValue === "" ? false : true)
-  }, [model, index, getStartValue])
+    //console.log(`In useLayoutEffect of field ${index}, startValue: '${startValue}', disabled: ${startValue === "" ? false : true}, ${JSON.stringify(model)}`)
+    const disabled: boolean = startValue !== ""
+    setDisabled(disabled)
+    if (disabled) {
+      setClassName("pyramid-field disabled")
+    } else {
+      setClassName("pyramid-field")
+    }
+  }, [model, getStartValue])
 
   return (
     <TextField
@@ -68,6 +80,7 @@ const MathPyramidField: React.FC<Props> = ({
         }
       }}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(`Value changed ${index}, ${event.target.value}`)
         const currentInputValue = event.target.value
         setValue(currentInputValue)
         const hasInput = ("" !== currentInputValue)

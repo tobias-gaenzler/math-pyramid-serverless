@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
+import axios from 'axios';
 import "./MathPyramidPractice.css"
 import Box from "@mui/material/Box"
 import Stack from "@mui/material/Stack"
@@ -8,59 +9,65 @@ import MathPyramidField, {
 import {
   Button,
 } from "@mui/material"
-import { MathPyramidCalculator } from "../../service/MathPyramidCalculator"
 import { Model } from "../../common"
 import { SuccessDialog } from ".."
 
-type Props = {
+type MathPyramidPracticeProps = {
   size: number
   maxValue: number
 }
 
-const MathPyramidPractice: React.FC<Props> = ({ size, maxValue }: Props) => {
-  const calculator = new MathPyramidCalculator()
-  const [model, setModel] = useState<Model>(() => {
-    // lazy state init
-    return new Model(size, maxValue, calculator)
-  })
+interface MathPyramidModelData {
+  size: number;
+  solution: number[];
+  startValues: number[];
+}
+
+const errorMessage = 'Could not retrieve math pyramid data from the API. Please try again later.'
+
+const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValue }: MathPyramidPracticeProps) => {
+  const [model, setModel] = useState<(Model | null)>();
   const [solved, setSolved] = useState<boolean>(false)
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
+  const initialized = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (!initialized.current) {
+      initialized.current = true
+      getMathPyramidData(size, maxValue);
+    }
+  }, []);
 
   const inputHandler: MathPyramidFieldHandler = (
     index: number,
     inputValue: string
   ): boolean => {
-    const inputCorrect = model.solution[index].toString() === inputValue
+    if (!model || !model.solution) {
+      return false;
+    }
+    const inputCorrect = (model.solution[index].toString() === inputValue)
     if (inputCorrect) {
       model.userInput[index] = parseInt(inputValue)
       setSolved(model.isSolved())
     }
+    //console.log(`In input handler of field ${index}, inputValue: '${inputValue}', correct: ${inputCorrect}`)
     return inputCorrect
   }
 
   const restart = () => {
-    setModel(new Model(size, maxValue, calculator))
+    getMathPyramidData(size, maxValue);
   }
+
   const closePopup = () => {
     setSolved(false)
   }
 
-  return (
-    <Stack
-      spacing={4}
-      justifyContent="center"
-      alignItems="center"
-      className="math-pyramid"
-    >
-      {getRows()}
-      <SuccessDialog open={solved} onClose={closePopup} />
-      <Button color="primary" variant="contained" onClick={restart}>
-        Restart
-      </Button>
-    </Stack>
-  )
-
   function getRows() {
     const rows: React.ReactElement[] = []
+    if (!model) {
+      return rows;
+    }
+
     for (let row = model.size - 1; row >= 0; row--) {
       const fields: React.ReactElement[] = getFieldsForRow(row)
       rows.push(
@@ -74,6 +81,10 @@ const MathPyramidPractice: React.FC<Props> = ({ size, maxValue }: Props) => {
 
   function getFieldsForRow(row: number) {
     const fields: React.ReactElement[] = []
+    if (!model) {
+      return fields;
+    }
+
     for (let column = 0; column < model.size - row; column++) {
       const index = model.getIndex(row, column)
       fields.push(
@@ -87,7 +98,57 @@ const MathPyramidPractice: React.FC<Props> = ({ size, maxValue }: Props) => {
     }
     return fields
   }
+
+  function getMathPyramidData(
+    size: number,
+    maxValue: number
+  ): void {
+    axios
+      .get<MathPyramidModelData>(`http://localhost:3001/hello?size=${size}&maxValue=${maxValue}`)
+      // .get<MathPyramidModelData>(`https://sajoteheca.execute-api.eu-central-1.amazonaws.com/Stage/hello?size=${size}&maxValue=${maxValue}`)
+      .then((response) => {
+        if (response && response.data) {
+          setModel(new Model(response.data.size, response.data.solution, response.data.startValues));
+          setShowErrorMessage(false);
+        } else {
+          throw new Error(`Invalid response from math pyramid api endpoint: ${JSON.stringify(response)}.`);
+        }
+      })
+      .catch((error) => {
+        console.error(`Could not get math pyramid data from API: ${error}`);
+        setShowErrorMessage(true);
+      });
+    ;
+  }
+
+  return showErrorMessage ? (
+    <Stack
+      spacing={4}
+      justifyContent="center"
+      alignItems="center"
+      className="math-pyramid"
+    >
+      <div>
+        {errorMessage}
+      </div>
+      <Button color="primary" variant="contained" onClick={restart}>
+        Try again
+      </Button>
+    </Stack>
+  ) : (
+    <Stack
+      spacing={4}
+      justifyContent="center"
+      alignItems="center"
+      className="math-pyramid"
+    >
+      {getRows()}
+      <SuccessDialog open={solved} onClose={closePopup} />
+      <Button color="primary" variant="contained" onClick={restart}>
+        {model == null ? 'Fetching Data ...' : 'Restart'}
+      </Button>
+    </Stack>
+  )
 }
 
 export default MathPyramidPractice
-

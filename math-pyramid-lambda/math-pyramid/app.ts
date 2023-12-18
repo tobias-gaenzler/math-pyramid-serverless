@@ -5,9 +5,6 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
     const HEADERS = {
         'Content-Type': 'application/json',
         'X-Custom-Header': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET,POST',
-        'Access-Control-Allow-Headers': 'Origin,X-Requested-With,Content-Type',
     };
     try {
         const queryParameters: Map<string, number> = getQueryParameters(event);

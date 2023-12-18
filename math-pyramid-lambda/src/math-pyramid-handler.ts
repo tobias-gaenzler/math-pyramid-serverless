@@ -1,10 +1,11 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { NDArray, matrix } from 'vectorious';
 
-export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const createHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const HEADERS = {
         'Content-Type': 'application/json',
         'X-Custom-Header': 'application/json',
+        'Access-Control-Allow-Origin': 'http://localhost:3000'
     };
     try {
         const queryParameters: Map<string, number> = getQueryParameters(event);
@@ -54,13 +55,14 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
     function getUniquelySolvableRandomStartValues(solution: number[]): number[] {
         const size: number = getSizeFromNumberOfBlocks(solution.length);
         let startValues: Map<number, number> = getRandomStartValues(solution);
-        let tries = 1;
-        while (isNotSolvable(startValues, size) && tries <= 100) {
+        let tries: number = 1;
+        const maxIterations: number = 250;
+        while (isNotSolvable(startValues, size) && tries <= maxIterations) {
             startValues = getRandomStartValues(solution);
             tries++;
         }
-        if (tries >= 1000) {
-            throw new Error('Could not find a uniquely solvable solution in 100 iterations.');
+        if (tries >= maxIterations) {
+            throw new Error(`Could not find a uniquely solvable solution in ${maxIterations} iterations.`);
         }
         console.log(`Needed ${tries} iterations to find suitable start values.`);
         const startValuesAsArray: number[] = new Array(solution.length).fill(null);

@@ -103,10 +103,8 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
     maxValue: number
   ): void {
     axios
-      .get<MathPyramidModelData>(`http://localhost:3001/create?size=${size}&maxValue=${maxValue}`) // SLOW: > 1 sec
-      //.get<MathPyramidModelData>(`https://ttdgm7u2lsfjsngkm6i2pp7o5y0hhkex.lambda-url.eu-central-1.on.aws/?size=${size}&maxValue=${maxValue}`) // FAST!! but no local invocation support for function URL
-      //.get<MathPyramidModelData>('https://jsonplaceholder.typicode.com/todos/1') // just for testing get request
-      //.post<MathPyramidModelData>('http://127.0.0.1:3001/2015-03-31/functions/MathPyramidFunction/invocations') // -> CORS error, NO Query parameters
+      .post<MathPyramidModelData>(`http://localhost:3001/dev/create?size=${size}&maxValue=${maxValue}`) // -> CORS error, NO Query parameters
+      //.post<MathPyramidModelData>(`https://nuc2rq2ik3.execute-api.eu-central-1.amazonaws.com/dev/create?size=${size}&maxValue=${maxValue}`) // -> CORS error, NO Query parameters
       .then((response) => {
         if (response !== null && response.data !== null && response.data.size !== null && response.data.solution !== null && response.data.startValues !== null) {
           setModel(new Model(response.data.size, response.data.solution, response.data.startValues))

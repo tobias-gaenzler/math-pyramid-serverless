@@ -3,12 +3,13 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   math-pyramid
 
-  Sample SAM Template for math-pyramid
+  Creates math pyramid data: size, solutionValues, startValues which can be used by an app to display the math pyramid.
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 1
+  # API is slow in our case (>1s) locally and when deployed. Using lambda function URL is much faster but has no local execution support.
+  # URL for lambda invocation locally from app: 'curl -XPOST http://127.0.0.1:3001/2015-03-31/functions/MathPyramidFunction/invocations'
   Api:
     Cors:
       AllowMethods: "'GET,POST,OPTIONS'"
@@ -18,12 +19,24 @@ Globals:
 
 Resources:
   MathPyramidFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: math-pyramid/
       Handler: app.lambdaHandler
       Runtime: nodejs20.x
       MemorySize: 128
+      # FunctionUrlConfig: -> no local invocation support, but fast when deployed
+      #   AuthType: NONE
+      #   InvokeMode: BUFFERED
+      #   Cors:
+      #     AllowMethods:
+      #       - GET
+      #     AllowOrigins: 
+      #       - '*'
+      #     AllowHeaders:
+      #     - 'Origin'
+      #     - 'X-Requested-With'
+      #     - 'Content-Type'
       Architectures:
         - x86_64
       Events:
@@ -37,20 +50,24 @@ Resources:
       BuildProperties:
         Minify: true
         Target: "es2020"
-        Sourcemap: true
+        Sourcemap: false
         EntryPoints:
           - app.ts
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  MathPyramidApi:
-    Description: "API Gateway endpoint URL for Prod stage for MathPyramid function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/create/"
   MathPyramidFunction:
     Description: "MathPyramid Lambda Function ARN"
-    Value: !GetAtt MathPyramidFunction.Arn
+    Value: 
+      Fn::GetAtt: MathPyramidFunction.Arn
+  MathPyramidApi:
+    Description: "API Gateway endpoint URL for Prod stage for MathPyramid function"
+    Value: 
+      !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/create/"
+  # MathPyramidUrlEndpoint:
+  #     Description: "MathPyramid Lambda Function URL Endpoint"
+  #     Value:
+  #       Fn::GetAtt: MathPyramidFunctionUrl.FunctionUrl    
   MathPyramidFunctionIamRole:
     Description: "Implicit IAM Role created for MathPyramid function"
-    Value: !GetAtt MathPyramidFunctionRole.Arn
+    Value: 
+      Fn::GetAtt: MathPyramidFunctionRole.Arn

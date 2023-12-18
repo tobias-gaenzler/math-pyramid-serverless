@@ -24,6 +24,55 @@ __export(math_pyramid_handler_exports, {
 });
 module.exports = __toCommonJS(math_pyramid_handler_exports);
 
+// src/query-parameter-provider.ts
+var QueryParameterProvider = class {
+  getSizeAndMaxValue(event) {
+    let size = 3;
+    let maxValue = 100;
+    if (this.isDefined(event.queryStringParameters?.size)) {
+      if (this.isValidSize(event.queryStringParameters?.size)) {
+        size = Number(event.queryStringParameters.size);
+      } else {
+        throw new Error(`Invalid size: size must be between 3 and 10. Current value:${size}`);
+      }
+    }
+    if (this.isDefined(event.queryStringParameters?.maxValue)) {
+      if (this.isValidMaxValue(event.queryStringParameters?.maxValue)) {
+        maxValue = Number(event.queryStringParameters.maxValue);
+      } else {
+        throw new Error(`Invalid maxValue: maxValue must be between 100 and 1000000. Current value:${maxValue}`);
+      }
+    }
+    console.log(`Using the following values: size: ${size}, maxValue: ${maxValue}`);
+    return [size, maxValue];
+  }
+  isDefined(size) {
+    return size !== null && size !== void 0;
+  }
+  isValidSize(size) {
+    try {
+      if (size === void 0) {
+        return false;
+      }
+      const parsedSize = parseInt(size);
+      return parsedSize >= 3 && parsedSize <= 10;
+    } catch (error) {
+      return false;
+    }
+  }
+  isValidMaxValue(maxValue) {
+    try {
+      if (maxValue === void 0) {
+        return false;
+      }
+      const parsedMaxValue = parseInt(maxValue);
+      return parsedMaxValue >= 100 && parsedMaxValue <= 1e6;
+    } catch (error) {
+      return false;
+    }
+  }
+};
+
 // node_modules/vectorious/dist/index.mjs
 var Xt = Object.create;
 var mr = Object.defineProperty;
@@ -1404,40 +1453,9 @@ try {
 } catch {
 }
 
-// src/math-pyramid-handler.ts
-var createHandler = async (event) => {
-  const HEADERS = {
-    "Content-Type": "application/json",
-    "X-Custom-Header": "application/json",
-    "Access-Control-Allow-Origin": "http://localhost:3000"
-  };
-  try {
-    const queryParameters = getQueryParameters(event);
-    const solution = createRandomSolution(
-      queryParameters.get("size"),
-      queryParameters.get("maxValue")
-    );
-    const startValues = getUniquelySolvableRandomStartValues(solution);
-    console.log(`Start values: ${JSON.stringify(startValues)}`);
-    console.log(`Solution values: ${JSON.stringify(solution)}`);
-    return {
-      statusCode: 200,
-      headers: HEADERS,
-      body: JSON.stringify({
-        size: queryParameters.get("size"),
-        startValues,
-        solution
-      })
-    };
-  } catch (err) {
-    console.error(err);
-    return {
-      statusCode: 500,
-      headers: HEADERS,
-      body: `{ "message": "${err}" }`
-    };
-  }
-  function createRandomSolution(size, maxValue) {
+// src/math-pyramid-factory.ts
+var MathPyramidFactory = class {
+  createRandomSolution(size, maxValue) {
     const maxValueInLowestRow = Math.max(2, Math.floor(maxValue / Math.pow(2, size - 1)));
     const randomSolution = new Array(size).fill(0).map(() => Math.floor(Math.random() * (maxValueInLowestRow - 1) + 1));
     let offset = 0;
@@ -1449,13 +1467,13 @@ var createHandler = async (event) => {
     }
     return randomSolution;
   }
-  function getUniquelySolvableRandomStartValues(solution) {
-    const size = getSizeFromNumberOfBlocks(solution.length);
-    let startValues = getRandomStartValues(solution);
+  getUniquelySolvableRandomStartValues(solution) {
+    const size = this.getSizeFromNumberOfBlocks(solution.length);
+    let startValues = this.getRandomStartValues(solution);
     let tries = 1;
     const maxIterations = 250;
-    while (isNotSolvable(startValues, size) && tries <= maxIterations) {
-      startValues = getRandomStartValues(solution);
+    while (this.isNotSolvable(startValues, size) && tries <= maxIterations) {
+      startValues = this.getRandomStartValues(solution);
       tries++;
     }
     if (tries >= maxIterations) {
@@ -1468,60 +1486,60 @@ var createHandler = async (event) => {
     });
     return startValuesAsArray;
   }
-  function getRandomStartValues(solution) {
-    const size = getSizeFromNumberOfBlocks(solution.length);
-    const numberOfBlocks = getNumberOfBlocks(size);
+  getRandomStartValues(solution) {
+    const size = this.getSizeFromNumberOfBlocks(solution.length);
+    const numberOfBlocks = this.getNumberOfBlocks(size);
     const randomStartValues = /* @__PURE__ */ new Map();
-    const randomIndices = getRandomIndices(numberOfBlocks, size);
+    const randomIndices = this.getRandomIndices(numberOfBlocks, size);
     randomIndices.forEach((randomIndex) => {
       randomStartValues.set(randomIndex, solution[randomIndex]);
     });
     return randomStartValues;
   }
-  function getDifficulty(startPositions, size) {
-    if (!isUniquelySolvable(startPositions, size)) {
+  getDifficulty(startPositions, size) {
+    if (!this.isUniquelySolvable(startPositions, size)) {
       return null;
     }
     const calculatablePositions = new Set(startPositions);
     for (let i2 = 0; i2 < size; i2++) {
-      addCurrentCalculatablePositions(calculatablePositions, size);
+      this.addCurrentCalculatablePositions(calculatablePositions, size);
     }
-    return calculatablePositions.size < getNumberOfBlocks(size) ? 1 : 0;
+    return calculatablePositions.size < this.getNumberOfBlocks(size) ? 1 : 0;
   }
-  function addCurrentCalculatablePositions(calculatablePositions, size) {
+  addCurrentCalculatablePositions(calculatablePositions, size) {
     for (let row = 0; row < size - 1; row++) {
       for (let column = 0; column < size - row; column++) {
         if (column + 1 < size - row) {
-          const first = getIndex(row, column, size);
-          const second = getIndex(row, column + 1, size);
+          const first = this.getIndex(row, column, size);
+          const second = this.getIndex(row, column + 1, size);
           if (calculatablePositions.has(first) && calculatablePositions.has(second)) {
-            calculatablePositions.add(getIndex(row + 1, column, size));
+            calculatablePositions.add(this.getIndex(row + 1, column, size));
           }
-          const firstMinus = getIndex(row, column, size);
-          const secondMinus = getIndex(row + 1, column, size);
+          const firstMinus = this.getIndex(row, column, size);
+          const secondMinus = this.getIndex(row + 1, column, size);
           if (calculatablePositions.has(firstMinus) && calculatablePositions.has(secondMinus)) {
-            calculatablePositions.add(getIndex(row, column + 1, size));
+            calculatablePositions.add(this.getIndex(row, column + 1, size));
           }
         }
         if (column > 0) {
-          const firstMinus = getIndex(row, column, size);
-          const secondMinus = getIndex(row + 1, column - 1, size);
+          const firstMinus = this.getIndex(row, column, size);
+          const secondMinus = this.getIndex(row + 1, column - 1, size);
           if (calculatablePositions.has(firstMinus) && calculatablePositions.has(secondMinus)) {
-            calculatablePositions.add(getIndex(row, column - 1, size));
+            calculatablePositions.add(this.getIndex(row, column - 1, size));
           }
         }
       }
     }
   }
-  function getIndex(rowId, colId, size) {
-    checkDimensions(rowId, colId, size);
+  getIndex(rowId, colId, size) {
+    this.checkDimensions(rowId, colId, size);
     let index = 0;
     for (let i2 = 0; i2 < rowId; i2 = i2 + 1) {
       index = index + size - i2;
     }
     return index + colId;
   }
-  function checkDimensions(rowId, colId, size) {
+  checkDimensions(rowId, colId, size) {
     let message = "";
     if (rowId < 0 || rowId >= size) {
       message += `rowId ${rowId} must be non-negative and smaller than the size of the pyramid ${size}`;
@@ -1533,11 +1551,11 @@ var createHandler = async (event) => {
       throw new Error(message);
     }
   }
-  function isUniquelySolvable(startValues, size) {
-    const columns = getNumberOfBlocks(size);
+  isUniquelySolvable(startValues, size) {
+    const columns = this.getNumberOfBlocks(size);
     const rows = columns - size;
     const A2 = K(rows, rows);
-    const F = createMatrix(size);
+    const F = this.createMatrix(size);
     let column = 0;
     for (let i2 = 0; i2 < columns; i2++) {
       if (!startValues.has(i2)) {
@@ -1555,8 +1573,8 @@ var createHandler = async (event) => {
       return false;
     }
   }
-  function createMatrix(size) {
-    const numberOfColumns = getNumberOfBlocks(size);
+  createMatrix(size) {
+    const numberOfColumns = this.getNumberOfBlocks(size);
     const numberOfRows = numberOfColumns - size;
     const A2 = K(numberOfRows, numberOfColumns);
     for (let i2 = 0; i2 < numberOfRows; i2++) {
@@ -1572,69 +1590,53 @@ var createHandler = async (event) => {
     }
     return A2;
   }
-  function getRandomIndices(maxValue, numberOfIndices) {
+  getRandomIndices(maxValue, numberOfIndices) {
     const givenList = Array.from({ length: maxValue }, (_, i2) => i2);
     givenList.sort(() => Math.random() - 0.5);
     return givenList.slice(0, numberOfIndices);
   }
-  function getNumberOfBlocks(size) {
+  getNumberOfBlocks(size) {
     return (size * size + size) / 2;
   }
-  function getSizeFromNumberOfBlocks(numberOfBlocks) {
+  getSizeFromNumberOfBlocks(numberOfBlocks) {
     return (Math.sqrt(1 + 8 * numberOfBlocks) - 1) / 2;
   }
-  function isNotSolvable(startValues, size) {
-    const difficulty = getDifficulty(new Set(startValues.keys()), size);
+  isNotSolvable(startValues, size) {
+    const difficulty = this.getDifficulty(new Set(startValues.keys()), size);
     return difficulty === 1 || difficulty === null;
   }
-  function getQueryParameters(event2) {
-    const queryParameters = /* @__PURE__ */ new Map([
-      ["size", 3],
-      ["maxValue", 100]
-    ]);
-    const size = event2.queryStringParameters?.size;
-    const maxValue = event2.queryStringParameters?.maxValue;
-    if (isDefined(size)) {
-      if (isValidSize(size)) {
-        queryParameters.set("size", Number(event2.queryStringParameters.size));
-      } else {
-        throw new Error(`Invalid size: size must be between 3 and 10. Current value:${size}`);
-      }
-    }
-    if (isDefined(maxValue)) {
-      if (isValidMaxValue(maxValue)) {
-        queryParameters.set("maxValue", Number(event2.queryStringParameters.maxValue));
-      } else {
-        throw new Error(`Invalid maxValue: maxValue must be between 100 and 1000000. Current value:${maxValue}`);
-      }
-    }
-    console.log(`Using the following values: ${[...queryParameters.entries()]}`);
-    return queryParameters;
-  }
-  function isDefined(size) {
-    return size !== null && size !== void 0;
-  }
-  function isValidSize(size) {
-    try {
-      if (size === void 0) {
-        return false;
-      }
-      const parsedSize = parseInt(size);
-      return parsedSize >= 3 && parsedSize <= 10;
-    } catch (error) {
-      return false;
-    }
-  }
-  function isValidMaxValue(maxValue) {
-    try {
-      if (maxValue === void 0) {
-        return false;
-      }
-      const parsedMaxValue = parseInt(maxValue);
-      return parsedMaxValue >= 100 && parsedMaxValue <= 1e6;
-    } catch (error) {
-      return false;
-    }
+};
+
+// src/math-pyramid-handler.ts
+var HEADERS = {
+  "Content-Type": "application/json",
+  "X-Custom-Header": "application/json",
+  "Access-Control-Allow-Origin": "http://localhost:3000"
+};
+var createHandler = async (event) => {
+  try {
+    const [size, maxValue] = new QueryParameterProvider().getSizeAndMaxValue(event);
+    const factory = new MathPyramidFactory();
+    const solution = factory.createRandomSolution(size, maxValue);
+    const startValues = factory.getUniquelySolvableRandomStartValues(solution);
+    console.log(`Start values: ${JSON.stringify(startValues)}`);
+    console.log(`Solution values: ${JSON.stringify(solution)}`);
+    return {
+      statusCode: 200,
+      headers: HEADERS,
+      body: JSON.stringify({
+        size,
+        startValues,
+        solution
+      })
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      statusCode: 500,
+      headers: HEADERS,
+      body: `{ "message": "${err}" }`
+    };
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

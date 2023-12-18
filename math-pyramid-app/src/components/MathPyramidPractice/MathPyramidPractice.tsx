@@ -24,6 +24,7 @@ interface MathPyramidModelData {
 }
 
 const errorMessage = 'Error while retrieving math pyramid data from the API. Please try again later.'
+const apiBase: string | undefined = process.env.REACT_APP_API_BASE
 
 const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValue }: MathPyramidPracticeProps) => {
   const [model, setModel] = useState<(Model | null)>();
@@ -103,8 +104,7 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
     maxValue: number
   ): void {
     axios
-      .post<MathPyramidModelData>(`http://localhost:3001/dev/create?size=${size}&maxValue=${maxValue}`) // -> CORS error, NO Query parameters
-      //.post<MathPyramidModelData>(`https://nuc2rq2ik3.execute-api.eu-central-1.amazonaws.com/dev/create?size=${size}&maxValue=${maxValue}`) // -> CORS error, NO Query parameters
+      .post<MathPyramidModelData>(`${apiBase}?size=${size}&maxValue=${maxValue}`)
       .then((response) => {
         if (response !== null && response.data !== null && response.data.size !== null && response.data.solution !== null && response.data.startValues !== null) {
           setModel(new Model(response.data.size, response.data.solution, response.data.startValues))

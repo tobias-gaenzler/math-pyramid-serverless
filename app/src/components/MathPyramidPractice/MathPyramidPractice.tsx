@@ -71,10 +71,10 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
     index: number,
     inputValue: string
   ): boolean => {
-    if (!model || !model.solution) {
+    if (!model || !model.solutionValues) {
       return false;
     }
-    const inputCorrect = (model.solution[index].toString() === inputValue)
+    const inputCorrect = (model.solutionValues[index].toString() === inputValue)
     if (inputCorrect) {
       model.userInput[index] = parseInt(inputValue)
       setSolved(model.isSolved())

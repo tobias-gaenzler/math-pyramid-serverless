@@ -34,7 +34,7 @@ const MathPyramidField: React.FC<Props> = ({
 
   // set field color when input changes
   useEffect(() => {
-    if (!model || !model.solution) {
+    if (!model || !model.solutionValues) {
       //setClassName("pyramid-field disabled")
       return
     }
@@ -42,7 +42,7 @@ const MathPyramidField: React.FC<Props> = ({
     if (expectsUserInput) {
       if (value === "") {
         setClassName("pyramid-field");
-      } else if (model.solution[index].toString() === value) {
+      } else if (model.solutionValues[index].toString() === value) {
         setClassName("pyramid-field correct");
         setDisabled(true);
       } else {

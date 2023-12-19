@@ -6,14 +6,14 @@ interface MathPyramidModelData {
 
 class Model {
   size: number;
-  solution: number[];
+  solutionValues: number[];
   startValues: number[];
   userInput: number[];
   constructor(
     data: MathPyramidModelData
   ) {
     this.size = data.size;
-    this.solution = data.solution;;
+    this.solutionValues = data.solution;;
     this.startValues = data.startValues;
     this.userInput = Object.assign([], this.startValues);
   }
@@ -28,7 +28,7 @@ class Model {
   }
 
   isSolved() {
-    return JSON.stringify(this.solution) === JSON.stringify(this.userInput)
+    return JSON.stringify(this.solutionValues) === JSON.stringify(this.userInput)
   }
 }
 

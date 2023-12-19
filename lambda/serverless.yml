@@ -1,5 +1,5 @@
 service: math-pyramid
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 provider:
   name: aws
@@ -7,7 +7,7 @@ provider:
   deploymentMethod: direct
   region: eu-central-1
   logs:
-    websocket: 
+    websocket:
       format: '{ "requestId":"$context.requestId",   "ip": "$context.identity.sourceIp" }'
 
 functions:
@@ -39,8 +39,30 @@ custom:
     httpPort: 3001
     websocketPort: 3002
     lambdaPort: 3003
+  serverless-dynamodb:
+    start:
+      port: 3010
+      inMemory: true
+      docker: false
+      migrate: true
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: usersTable
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 
 plugins:
   - serverless-offline
   - serverless-esbuild
-
+  - serverless-dynamodb

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "esbuild": "^0.14.14",
+    "serverless-dynamodb": "^0.2.47",
     "serverless-esbuild": "^1.50.0",
     "vectorious": "^6.1.12"
   },

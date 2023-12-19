@@ -10,7 +10,11 @@ export class RestService {
         return axios
             .post<MathPyramidModelData>(`${API_BASE}?size=${size}&maxValue=${maxValue}`)
             .then((response) => {
-                if (response !== null && response.data !== null && response.data.size !== null && response.data.solution !== null && response.data.startValues !== null) {
+                if (response !== null &&
+                    response.data !== null &&
+                    response.data.size !== null &&
+                    response.data.solution !== null &&
+                    response.data.startValues !== null) {
                     return response.data
                 } else {
                     throw new Error(`Invalid response from math pyramid api endpoint: ${JSON.stringify(response)}.`)

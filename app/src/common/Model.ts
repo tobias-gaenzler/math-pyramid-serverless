@@ -1,6 +1,6 @@
 interface MathPyramidModelData {
   size: number;
-  solution: number[];
+  solutionValues: number[];
   startValues: number[];
 }
 
@@ -13,7 +13,7 @@ class Model {
     data: MathPyramidModelData
   ) {
     this.size = data.size;
-    this.solutionValues = data.solution;;
+    this.solutionValues = data.solutionValues;
     this.startValues = data.startValues;
     this.userInput = Object.assign([], this.startValues);
   }

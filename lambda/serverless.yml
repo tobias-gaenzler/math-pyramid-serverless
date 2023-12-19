@@ -24,16 +24,16 @@ functions:
           route: $connect
       - websocket:
           route: $disconnect
-  # defaultHandler:
-  #   handler: src/websocket/handler.defaultHandler
-  #   events:
-  #     - websocket:
-  #         route: $default #simple event definition without extra route property
-  # startGameHandler:
-  #   handler: src/websocket/handler.startHandler
-  #   events:
-  #     - websocket:
-  #         route: start # will trigger if $request.body.action === "start"
+  defaultHandler:
+    handler: src/websocket/handler.defaultHandler
+    events:
+      - websocket:
+          route: $default #simple event definition without extra route property
+  startGameHandler:
+    handler: src/websocket/handler.startHandler
+    events:
+      - websocket:
+          route: start # will trigger if $request.body.action === "start"
 custom:
   serverless-offline:
     httpPort: 3001

@@ -25,7 +25,7 @@ export const createHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
             body: JSON.stringify({
                 size: size,
                 startValues: startValues,
-                solution: solutionValues,
+                solutionValues: solutionValues,
             }),
         };
     } catch (err) {

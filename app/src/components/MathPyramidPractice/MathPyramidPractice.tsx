@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 import "./MathPyramidPractice.css"
 import Box from "@mui/material/Box"
 import Stack from "@mui/material/Stack"
@@ -12,6 +12,7 @@ import { Model } from "../../common"
 import { SuccessDialog } from ".."
 import useWebSocket, { ReadyState } from "react-use-websocket"
 import { RestService } from "../../service/rest-service";
+import { MathPyramidModelData } from "../../common/Model"
 
 
 type MathPyramidPracticeProps = {
@@ -26,44 +27,32 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
   const [model, setModel] = useState<(Model | null)>();
   const [solved, setSolved] = useState<boolean>(false)
   const [showErrorMessage, setShowErrorMessage] = useState(false)
-  const initialized = useRef<boolean>(false);
   const restService: RestService = new RestService();
 
-  useEffect(() => {
-    if (!initialized.current) {
-      initialized.current = true
-      getMathPyramidData(size, maxValue);
-    }
-  }, []);
-
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket<MathPyramidModelData>(
     WS_URL,
     {
+      onOpen: () => {
+        console.log('WebSocket connection established.')
+      },
       share: false,
       shouldReconnect: () => true,
     },
   )
 
-  // Run when the connection state (readyState) changes
+  // Start a new game when the connection is established and there is no model yet
   useEffect(() => {
-    console.log(`Connection state changed to: ${readyState}`)
-    if (readyState === ReadyState.OPEN) {
-      console.log("Connection is OPEN")
-      // sendJsonMessage({
-      //   event: "subscribe",
-      //   data: {
-      //     channel: "general-chatroom",
-      //   },
-      // })
-    } else if (readyState === ReadyState.CLOSED) {
-      console.log("Connection is CLOSED")
-    }
+    console.log(`Connection state changed to: ${ReadyState[readyState]}`)
   }, [readyState])
 
   // Run when a new WebSocket message is received
   useEffect(() => {
     if (lastJsonMessage) {
-      console.log(`Got a new message: ${lastJsonMessage}`)
+      console.log(`Received message: ${lastJsonMessage}`)
+      const newModel = new Model(lastJsonMessage);
+      setModel(newModel)
+      setSolved(false)
+      setShowErrorMessage(false)
     }
   }, [lastJsonMessage])
 
@@ -83,7 +72,19 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
   }
 
   const restart = () => {
-    getMathPyramidData(size, maxValue);
+    restService
+      .getMathPyramidModel(size, maxValue)
+      .then((data) => {
+        sendJsonMessage({
+          action: "start",
+          data: data
+        })
+        setShowErrorMessage(false)
+      })
+      .catch((error) => {
+        setShowErrorMessage(true)
+        console.error(`Could not get math pyramid data from API: ${error}`)
+      })
   }
 
   const closePopup = () => {
@@ -162,7 +163,7 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
       {getRows()}
       <SuccessDialog open={solved} onClose={closePopup} />
       <Button color="primary" variant="contained" onClick={restart}>
-        {model == null ? 'Fetching Data ...' : 'Restart'}
+        {model == null ? 'Start' : 'Restart'}
       </Button>
     </Stack>
   )

@@ -13,7 +13,7 @@ export class RestService {
                 if (response !== null &&
                     response.data !== null &&
                     response.data.size !== null &&
-                    response.data.solution !== null &&
+                    response.data.solutionValues !== null &&
                     response.data.startValues !== null) {
                     return response.data
                 } else {

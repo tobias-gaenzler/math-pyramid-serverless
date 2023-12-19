@@ -12,34 +12,34 @@ export class MathPyramidFactory {
         return new MathPyramidSolver().solveBottomUp(size, randomSolution);
     }
 
-    getUniquelySolvableRandomStartValues(solution: number[]): number[] {
-        const size: number = this.getSizeFromNumberOfBlocks(solution.length);
-        let startValues: Map<number, number> = this.getRandomStartValues(solution);
+    getUniquelySolvableRandomStartValues(solutionValues: number[]): number[] {
+        const size: number = this.getSizeFromNumberOfBlocks(solutionValues.length);
+        let startValues: Map<number, number> = this.getRandomStartValues(solutionValues);
         let tries: number = 1;
         const maxIterations: number = 250;
         const solver: MathPyramidSolver = new MathPyramidSolver();
         while (solver.isNotSolvable(startValues, size) && tries <= maxIterations) {
-            startValues = this.getRandomStartValues(solution);
+            startValues = this.getRandomStartValues(solutionValues);
             tries++;
         }
         if (tries >= maxIterations) {
             throw new Error(`Could not find a uniquely solvable solution in ${maxIterations} iterations.`);
         }
         console.log(`Needed ${tries} iterations to find suitable start values.`);
-        const startValuesAsArray: number[] = new Array(solution.length).fill(null);
+        const startValuesAsArray: number[] = new Array(solutionValues.length).fill(null);
         startValues.forEach((value: number, key: number) => {
             startValuesAsArray[key] = value;
         });
         return startValuesAsArray;
     }
 
-    private getRandomStartValues(solution: number[]): Map<number, number> {
-        const size: number = this.getSizeFromNumberOfBlocks(solution.length);
+    private getRandomStartValues(solutionValues: number[]): Map<number, number> {
+        const size: number = this.getSizeFromNumberOfBlocks(solutionValues.length);
         const numberOfBlocks: number = this.getNumberOfBlocks(size);
         const randomStartValues: Map<number, number> = new Map<number, number>();
         const randomIndices: number[] = this.getRandomIndices(numberOfBlocks, size);
         randomIndices.forEach((randomIndex: number) => {
-            randomStartValues.set(randomIndex, solution[randomIndex]);
+            randomStartValues.set(randomIndex, solutionValues[randomIndex]);
         });
         return randomStartValues;
     }

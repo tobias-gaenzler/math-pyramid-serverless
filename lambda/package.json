@@ -15,10 +15,11 @@
   },
   "dependencies": {
     "esbuild": "^0.14.14",
-    "vectorious": "^6.1.12",
-    "serverless-esbuild": "^1.50.0"
+    "serverless-esbuild": "^1.50.0",
+    "vectorious": "^6.1.12"
   },
   "devDependencies": {
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.476.0",
     "@types/aws-lambda": "^8.10.92",
     "@types/jest": "^29.2.0",
     "@types/node": "^20.5.7",

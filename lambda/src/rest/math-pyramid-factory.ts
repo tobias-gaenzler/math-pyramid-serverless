@@ -1,4 +1,3 @@
-import { NDArray, matrix } from 'vectorious';
 import { MathPyramidSolver } from './math-pyramid-solver';
 
 export class MathPyramidFactory {

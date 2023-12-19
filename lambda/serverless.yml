@@ -6,17 +6,39 @@ provider:
   runtime: nodejs20.x
   deploymentMethod: direct
   region: eu-central-1
+  logs:
+    websocket: 
+      format: '{ "requestId":"$context.requestId",   "ip": "$context.identity.sourceIp" }'
 
 functions:
   math-pyramid:
-    handler: src/math-pyramid-handler.createHandler
+    handler: src/rest/handler.createHandler
     events:
       - http:
           path: /create
           method: post
+  connectionHandler:
+    handler: src/websocket/handler.connectionHandler
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+  # defaultHandler:
+  #   handler: src/websocket/handler.defaultHandler
+  #   events:
+  #     - websocket:
+  #         route: $default #simple event definition without extra route property
+  # startGameHandler:
+  #   handler: src/websocket/handler.startHandler
+  #   events:
+  #     - websocket:
+  #         route: start # will trigger if $request.body.action === "start"
 custom:
   serverless-offline:
     httpPort: 3001
+    websocketPort: 3002
+    lambdaPort: 3003
 
 plugins:
   - serverless-offline

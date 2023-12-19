@@ -1,16 +1,20 @@
+interface MathPyramidModelData {
+  size: number;
+  solution: number[];
+  startValues: number[];
+}
+
 class Model {
   size: number;
   solution: number[];
   startValues: number[];
   userInput: number[];
   constructor(
-    size: number,
-    solution: number[],
-    startValues: number[]
+    data: MathPyramidModelData
   ) {
-    this.size = size;
-    this.solution = solution; ;
-    this.startValues = startValues;
+    this.size = data.size;
+    this.solution = data.solution;;
+    this.startValues = data.startValues;
     this.userInput = Object.assign([], this.startValues);
   }
 
@@ -29,3 +33,4 @@ class Model {
 }
 
 export { Model };
+export type { MathPyramidModelData };

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react"
-import axios from 'axios';
 import "./MathPyramidPractice.css"
 import Box from "@mui/material/Box"
 import Stack from "@mui/material/Stack"
@@ -11,26 +10,24 @@ import {
 } from "@mui/material"
 import { Model } from "../../common"
 import { SuccessDialog } from ".."
+import useWebSocket, { ReadyState } from "react-use-websocket"
+import { RestService } from "../../service/rest-service";
+
 
 type MathPyramidPracticeProps = {
   size: number
   maxValue: number
 }
 
-interface MathPyramidModelData {
-  size: number;
-  solution: number[];
-  startValues: number[];
-}
-
-const errorMessage = 'Error while retrieving math pyramid data from the API. Please try again later.'
-const apiBase: string | undefined = process.env.REACT_APP_API_BASE
+const ERROR_MESSAGE = 'Error while retrieving math pyramid data from the API. Please try again later.'
+const WS_URL = "ws://127.0.0.1:3002"
 
 const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValue }: MathPyramidPracticeProps) => {
   const [model, setModel] = useState<(Model | null)>();
   const [solved, setSolved] = useState<boolean>(false)
   const [showErrorMessage, setShowErrorMessage] = useState(false)
   const initialized = useRef<boolean>(false);
+  const restService: RestService = new RestService();
 
   useEffect(() => {
     if (!initialized.current) {
@@ -38,6 +35,37 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
       getMathPyramidData(size, maxValue);
     }
   }, []);
+
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+    WS_URL,
+    {
+      share: false,
+      shouldReconnect: () => true,
+    },
+  )
+
+  // Run when the connection state (readyState) changes
+  useEffect(() => {
+    console.log(`Connection state changed to: ${readyState}`)
+    if (readyState === ReadyState.OPEN) {
+      console.log("Connection is OPEN")
+      // sendJsonMessage({
+      //   event: "subscribe",
+      //   data: {
+      //     channel: "general-chatroom",
+      //   },
+      // })
+    } else if (readyState === ReadyState.CLOSED) {
+      console.log("Connection is CLOSED")
+    }
+  }, [readyState])
+
+  // Run when a new WebSocket message is received
+  useEffect(() => {
+    if (lastJsonMessage) {
+      console.log(`Got a new message: ${lastJsonMessage}`)
+    }
+  }, [lastJsonMessage])
 
   const inputHandler: MathPyramidFieldHandler = (
     index: number,
@@ -103,26 +131,22 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
     size: number,
     maxValue: number
   ): void {
-    axios
-      .post<MathPyramidModelData>(`${apiBase}?size=${size}&maxValue=${maxValue}`)
-      .then((response) => {
-        if (response !== null && response.data !== null && response.data.size !== null && response.data.solution !== null && response.data.startValues !== null) {
-          setModel(new Model(response.data.size, response.data.solution, response.data.startValues))
-          setShowErrorMessage(false)
-        } else {
-          throw new Error(`Invalid response from math pyramid api endpoint: ${JSON.stringify(response)}.`)
-        }
+    restService
+      .getMathPyramidModel(size, maxValue)
+      .then((data) => {
+        setModel(new Model(data))
+        setShowErrorMessage(false)
       })
       .catch((error) => {
-        console.error(`Could not get math pyramid data from API: ${error}`)
         setShowErrorMessage(true)
+        console.error(`Could not get math pyramid data from API: ${error}`)
       })
   }
 
   return showErrorMessage ? (
     <Stack spacing={4} justifyContent="center" alignItems="center">
       <div>
-        {errorMessage}
+        {ERROR_MESSAGE}
       </div>
       <Button color="primary" variant="contained" onClick={restart}>
         Try again

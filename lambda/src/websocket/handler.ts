@@ -8,12 +8,12 @@ const HEADERS = {
 export const connectionHandler = async (event: APIGatewayProxyEvent) => {
     try {
         const connectionId = event.requestContext.connectionId;
-        console.log(JSON.stringify(event));
-        console.log('connection created or disconnected:', connectionId);
+        const message = `\nPerforming action "${event.requestContext.routeKey}" for connection ID ${connectionId}\n`;
+        console.log(message);
         return {
             statusCode: 200,
             headers: HEADERS,
-            body: 'Connected or Disconnected TODO.'
+            body: message
         };
     } catch (err) {
         console.error(err);

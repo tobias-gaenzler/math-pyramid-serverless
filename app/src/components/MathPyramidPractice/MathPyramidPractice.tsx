@@ -20,7 +20,7 @@ type MathPyramidPracticeProps = {
 }
 
 const ERROR_MESSAGE = 'Error while retrieving math pyramid data from the API. Please try again later.'
-const WS_URL = "ws://127.0.0.1:3002"
+const WS_URL: string = process.env.REACT_APP_WS_URL ?? ''
 
 const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValue }: MathPyramidPracticeProps) => {
   const [model, setModel] = useState<(Model | null)>();

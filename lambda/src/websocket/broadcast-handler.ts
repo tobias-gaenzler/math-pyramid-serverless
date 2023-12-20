@@ -78,9 +78,10 @@ async function sendMessageToConnection(
     dynamoDBClient: DynamoDBClient
 ) {
     const connectionId = connection.connectionid.S!;
+    const userName = connection.username.S!;
     await apiGatewayManagementApi.postToConnection({ "ConnectionId": connectionId, "Data": message, })
         .then(() => {
-            console.log(`Message sent to connection ${connectionId}`);
+            console.log(`Message sent to ${userName}/${connectionId}`);
         })
         .catch((err: any) => {
             if (err.name === "410") { // TODO: check if this works when deployed

@@ -15,15 +15,15 @@ import { uniqueNamesGenerator, Config, names } from 'unique-names-generator';
 
 const config: Config = { dictionaries: [names] };
 const USER_NAME: string = uniqueNamesGenerator(config);
-const ERROR_MESSAGE = 'Error while retrieving math pyramid data from the API. Please try again later.';
+const ERROR_MESSAGE: string = 'Error while retrieving math pyramid data from API. Please try again later.';
 const WS_URL: string = process.env.REACT_APP_WS_URL ?? '';
 
 const MathPyramidPractice: React.FC<{}> = ({ }) => {
   const [model, setModel] = useState<(Model | null)>();
-  const [solved, setSolved] = useState<boolean>(false);
+  const [solvedBy, setSolvedBy] = useState<string>("");
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket<string>(
+  const { sendJsonMessage, lastJsonMessage} = useWebSocket<string>(
     WS_URL,
     {
       onOpen: () => {
@@ -43,26 +43,20 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
   )
 
   useEffect(() => {
-    console.log(`Connection state changed to: ${ReadyState[readyState]}`)
-  }, [readyState])
-
-  useEffect(() => {
     // Execute when a new WebSocket message is received
     if (lastJsonMessage) {
-      console.log(`Received message: ${JSON.stringify(lastJsonMessage)}`)
-      if (isBroadcastMessage(JSON.stringify(lastJsonMessage))) {
+      const message = JSON.stringify(lastJsonMessage)
+      console.log(`Received message: ${message}`)
+      if (message.includes("\"action\":\"message\"")) {
+        setSolvedBy(JSON.parse(message).sender);
       } else {
-        const newModel = new Model(JSON.parse(JSON.stringify(lastJsonMessage)!) as MathPyramidModelData);
+        const newModel = new Model(JSON.parse(message) as MathPyramidModelData);
         setModel(newModel)
-        setSolved(false)
+        setSolvedBy("")
         setShowErrorMessage(false)
       }
     }
   }, [lastJsonMessage])
-
-  function isBroadcastMessage(jsonMessage: string): boolean {
-    return jsonMessage.includes("\"action\":\"message\"");
-  }
 
   const inputHandler: MathPyramidFieldHandler = (
     index: number,
@@ -79,10 +73,9 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
         sendJsonMessage({
           action: "message",
           sender: USER_NAME,
-          payload: "Pyramid solved by: "
+          payload: `Pyramid solved by: ${USER_NAME}`
         })
       }
-      setSolved(model.isSolved())
     }
     return inputCorrect
   }
@@ -93,7 +86,8 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
   }
 
   const closePopup = () => {
-    setSolved(false)
+    setSolvedBy("");
+    setModel(null);
   }
 
   function getRows() {
@@ -134,9 +128,12 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
   }
 
   return showErrorMessage ? (
-    <Stack spacing={4} justifyContent="center" alignItems="center">
+    <Stack
+      spacing={4}
+      justifyContent="center"
+      alignItems="center">
       <div>
-      My name: {USER_NAME}
+        My name: {USER_NAME}
       </div>
       <div>
         {ERROR_MESSAGE}
@@ -156,7 +153,7 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
         My name: {USER_NAME}
       </div>
       {getRows()}
-      <SuccessDialog open={solved} onClose={closePopup} />
+      <SuccessDialog onClose={closePopup} solvedBy={solvedBy} userName={USER_NAME} />
       <Button color="primary" variant="contained" onClick={restart}>
         {model == null ? 'Start' : 'Restart'}
       </Button>

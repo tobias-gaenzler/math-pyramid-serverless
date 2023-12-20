@@ -55,7 +55,7 @@ export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
 function getNewGameMessage(event: APIGatewayProxyEvent): string {
     const body = JSON.parse(event.body!);
     const size = body.data.size;
-    const maxValue = JSON.parse(event.body!).data.maxValue;
+    const maxValue = body.data.maxValue;
     const solutionValues: number[] = factory.createRandomSolution(size, maxValue);
     const startValues: number[] = factory.getUniquelySolvableRandomStartValues(solutionValues);
 

@@ -81,7 +81,7 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
   }
 
   const restart = () => {
-    sendJsonMessage({ action: "start", sender: USER_NAME, data: { size: 5, maxValue: 1000 } });
+    sendJsonMessage({ action: "start", sender: USER_NAME, data: { size: 3, maxValue: 100 } });
     setShowErrorMessage(false)
   }
 

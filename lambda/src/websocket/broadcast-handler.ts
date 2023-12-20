@@ -29,7 +29,7 @@ export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
         if ("start" === routeKey) {
             message = getNewGameMessage(event);
         } else {
-            message = getBroadcastMessage(event);
+            message = event.body || "";
         }
 
         await Promise.all(connections.Items!.map(async (connection: Record<string, AttributeValue>) => {
@@ -66,10 +66,6 @@ function getNewGameMessage(event: APIGatewayProxyEvent): string {
         startValues: startValues,
         solutionValues: solutionValues,
     });
-}
-
-function getBroadcastMessage(event: APIGatewayProxyEvent): string {
-    return event.body || "";
 }
 
 async function sendMessageToConnection(

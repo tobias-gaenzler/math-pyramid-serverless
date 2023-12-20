@@ -51,16 +51,14 @@ resources:
     usersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: playersTable
+        TableName: players
         AttributeDefinitions:
           - AttributeName: connectionid
             AttributeType: S
         KeySchema:
           - AttributeName: connectionid
             KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        BillingMode: PAY_PER_REQUEST
 
 plugins:
   - serverless-offline

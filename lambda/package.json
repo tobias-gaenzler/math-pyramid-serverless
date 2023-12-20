@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@aws-sdk/client-apigatewaymanagementapi": "^3.476.0",
+    "@aws-sdk/client-dynamodb": "^3.477.0",
     "@types/aws-lambda": "^8.10.92",
     "@types/jest": "^29.2.0",
     "@types/node": "^20.5.7",

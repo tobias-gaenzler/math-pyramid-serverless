@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react"
 import "./MathPyramidPractice.css"
-import Box from "@mui/material/Box"
 import Stack from "@mui/material/Stack"
-import MathPyramidField, {
-  MathPyramidFieldHandler,
-} from "../MathPyramidField/MathPyramidField"
+import { MathPyramidFieldHandler, } from "../MathPyramidField/MathPyramidField"
 import {
-  Button,
+  Button, TextField,
 } from "@mui/material"
 import useWebSocket from "react-use-websocket"
 import { MathPyramidModelData, Model } from "../../common/Model"
@@ -63,23 +60,17 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
   const inputHandler: MathPyramidFieldHandler = (
     index: number,
     inputValue: string
-  ): boolean => {
-    if (!model || !model.solutionValues) {
-      return false;
-    }
-    const inputCorrect = (model.solutionValues[index].toString() === inputValue)
-    if (inputCorrect) {
-      model.userInput[index] = parseInt(inputValue)
-      const isSolved = model.isSolved()
-      if (isSolved) {
+  ): void => {
+    if (model && model.solutionValues && model.solutionValues[index].toString() === inputValue) {
+      model.userInput[index] = parseInt(inputValue);
+      if (model.isSolved()) {
         sendJsonMessage({
           action: "message",
           sender: USER_NAME,
           payload: `Pyramid solved by: ${USER_NAME}`
-        })
+        });
       }
     }
-    return inputCorrect;
   }
 
   const restart = () => {
@@ -117,9 +108,7 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
       alignItems="center"
       className="math-pyramid"
     >
-      <div>
-        My name: {USER_NAME}
-      </div>
+      <div>Player name: <b>{USER_NAME}</b></div>
       {getRows()}
       <SuccessDialog onClose={closePopup} solvedBy={solvedBy} userName={USER_NAME} />
       <Button color="primary" variant="contained" onClick={restart}>

@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField"
 import { Model } from "../../common/Model"
 
 export interface MathPyramidFieldHandler {
-  (index: number, inputValue: string): boolean
+  (index: number, inputValue: string): void
 }
 
 type Props = {
@@ -35,7 +35,6 @@ const MathPyramidField: React.FC<Props> = ({
   // set field color when input changes
   useEffect(() => {
     if (!model || !model.solutionValues) {
-      //setClassName("pyramid-field disabled")
       return
     }
     const expectsUserInput = (getStartValue() === "");

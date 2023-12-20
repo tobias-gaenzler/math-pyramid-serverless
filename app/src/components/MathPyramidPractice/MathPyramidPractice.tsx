@@ -47,7 +47,7 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
   // Run when a new WebSocket message is received
   useEffect(() => {
     if (lastJsonMessage) {
-      console.log(`Received message: ${lastJsonMessage}`)
+      console.log(`Received message: ${JSON.stringify(lastJsonMessage)}`)
       const newModel = new Model(lastJsonMessage);
       setModel(newModel)
       setSolved(false)

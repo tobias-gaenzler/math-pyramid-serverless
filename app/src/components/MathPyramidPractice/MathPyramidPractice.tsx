@@ -3,7 +3,7 @@ import "./MathPyramidPractice.css"
 import Stack from "@mui/material/Stack"
 import { MathPyramidFieldHandler, } from "../MathPyramidField/MathPyramidField"
 import {
-  Button, TextField,
+  Button, DialogProps, TextField,
 } from "@mui/material"
 import useWebSocket from "react-use-websocket"
 import { MathPyramidModelData, Model } from "../../common/Model"

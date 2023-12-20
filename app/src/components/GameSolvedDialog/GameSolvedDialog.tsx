@@ -10,7 +10,7 @@ const GameSolvedDialog: React.FC<Props> = ({ onClose, solvedBy, userName }: Prop
   const title = (solvedByCurrentPlayer ? "YOU" : solvedBy) + " solved the pyramid!";
   const severity = solvedByCurrentPlayer ? "success" : "error";
   return solvedBy !== "" ? (
-    <Dialog open={true} onClose={onClose}>
+    <Dialog open={true}>
       <DialogContent>
         <Alert variant="filled" severity={severity}>
           <AlertTitle>{title}</AlertTitle>

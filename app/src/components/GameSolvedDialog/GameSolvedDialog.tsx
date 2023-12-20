@@ -5,7 +5,7 @@ type Props = {
   solvedBy: string
   userName: string
 }
-const SuccessDialog: React.FC<Props> = ({ onClose, solvedBy, userName }: Props) => {
+const GameSolvedDialog: React.FC<Props> = ({ onClose, solvedBy, userName }: Props) => {
   const solvedByCurrentPlayer = (userName === solvedBy);
   const title = (solvedByCurrentPlayer ? "YOU" : solvedBy) + " solved the pyramid!";
   const severity = solvedByCurrentPlayer ? "success" : "error";
@@ -23,4 +23,4 @@ const SuccessDialog: React.FC<Props> = ({ onClose, solvedBy, userName }: Props) 
   ) : (<> </>)
 }
 
-export { SuccessDialog }
+export { GameSolvedDialog as SuccessDialog }

@@ -7,7 +7,7 @@ import {
 } from "@mui/material"
 import useWebSocket from "react-use-websocket"
 import { MathPyramidModelData, Model } from "../../common/Model"
-import { SuccessDialog } from "../SuccessDialog/SuccessDialog"
+import { SuccessDialog } from "../GameSolvedDialog/GameSolvedDialog"
 import ErrorMessage from "../ErrorMessage/ErrorMessage"
 import { UserNameProvider } from "../../service/UserNameProvider"
 import MathPyramidRow from "../MathPyramidRow/MathPyramidRow"

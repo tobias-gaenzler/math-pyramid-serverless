@@ -74,8 +74,11 @@ async function sendMessageToConnection(
     apiGatewayManagementApi: ApiGatewayManagementApi,
     dynamoDBClient: DynamoDBClient
 ) {
+    if (!connection.connectionid || !connection.connectionid.S) {
+        return;
+    }
     const connectionId = connection.connectionid.S!;
-    const userName = connection.username.S!;
+    const userName = connection.username ? connection.username.S : "unknown";
     await apiGatewayManagementApi.postToConnection({ "ConnectionId": connectionId, "Data": message, })
         .then(() => {
             console.log(`Message sent to ${userName}/${connectionId}`);

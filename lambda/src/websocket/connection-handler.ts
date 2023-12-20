@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { HEADERS } from '../shared/headers';
-import { DeleteItemCommand, DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { $Command, DeleteItemCommand, DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 
 
 export const connectionHandler = async (event: APIGatewayProxyEvent) => {
@@ -9,7 +9,7 @@ export const connectionHandler = async (event: APIGatewayProxyEvent) => {
         const routeKey = event.requestContext.routeKey;
         console.log(`\nPerforming action "${routeKey}" for connection ID ${connectionId}\n`);
 
-        const dynamoDBClient = new DynamoDBClient({ region: "local", endpoint: "http://localhost:3010" });
+        const dynamoDBClient = new DynamoDBClient({ region: "local", endpoint: "http://localhost:3010" }); // TODO configurable
         if ("$connect" === routeKey) {
             await addConnection(connectionId, dynamoDBClient);
         } else if ("$disconnect" === routeKey) {
@@ -45,14 +45,7 @@ async function addConnection(connectionId: string, dynamoDBClient: DynamoDBClien
         "TableName": "players"
     };
     const command = new PutItemCommand(input);
-
-    try {
-        await dynamoDBClient.send(command);
-        console.log("Connection saved.");
-    } catch (error) {
-        console.error(`Error while saving connection: ${JSON.stringify(error)}`);
-        throw error;
-    }
+    await sendCommand(dynamoDBClient, command, "Connection saved.", "Error while saving connection");
 }
 
 async function setUserName(event: APIGatewayProxyEvent, connectionId: string, dynamoDBClient: DynamoDBClient) {
@@ -71,14 +64,7 @@ async function setUserName(event: APIGatewayProxyEvent, connectionId: string, dy
         "TableName": "players"
     };
     const command = new PutItemCommand(input);
-
-    try {
-        await dynamoDBClient.send(command);
-        console.log("Connection saved.");
-    } catch (error) {
-        console.error(`Error while setting username: ${JSON.stringify(error)}`);
-        throw error;
-    }
+    await sendCommand(dynamoDBClient, command, "Setting user name.", "Error while setting username");
 }
 
 async function removeConnection(connectionId: string, dynamoDBClient: DynamoDBClient) {
@@ -92,11 +78,20 @@ async function removeConnection(connectionId: string, dynamoDBClient: DynamoDBCl
         "TableName": "players"
     };
     const command = new DeleteItemCommand(params);
+    await sendCommand(dynamoDBClient, command, "Connection removed.", "Error while removing connection");
+}
+
+async function sendCommand(
+    dynamoDBClient: DynamoDBClient,
+    command: $Command<any, any, any, any, any>,
+    successMessage: string,
+    errorMessage: string) {
     try {
         await dynamoDBClient.send(command);
-        console.log("Connection removed.");
+        console.log(successMessage);
     } catch (error) {
-        console.error(`Error while removing connection ${JSON.stringify(error)}`);
+        console.error(errorMessage, JSON.stringify(error));
         throw error;
     }
 }
+

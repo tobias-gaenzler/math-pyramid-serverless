@@ -1,9 +1,5 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
-
-const HEADERS = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': 'http://localhost:3000'
-};
+import { HEADERS } from '../shared/headers';
 
 
 export const defaultHandler = async (event: APIGatewayProxyEvent) => {

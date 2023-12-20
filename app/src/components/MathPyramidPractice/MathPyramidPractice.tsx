@@ -40,7 +40,6 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
     },
   )
 
-  // Start a new game when the connection is established and there is no model yet
   useEffect(() => {
     console.log(`Connection state changed to: ${ReadyState[readyState]}`)
   }, [readyState])

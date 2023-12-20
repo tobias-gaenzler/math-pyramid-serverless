@@ -17,6 +17,8 @@ const config: Config = { dictionaries: [names] };
 const USER_NAME: string = uniqueNamesGenerator(config);
 const ERROR_MESSAGE: string = 'Error while retrieving math pyramid data from API. Please try again later.';
 const WS_URL: string = process.env.REACT_APP_WS_URL ?? '';
+const PYRAMID_SIZE = 3;
+const MAX_VALUE = 100;
 
 const MathPyramidPractice: React.FC<{}> = ({ }) => {
   const [model, setModel] = useState<(Model | null)>();
@@ -81,7 +83,7 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
   }
 
   const restart = () => {
-    sendJsonMessage({ action: "start", sender: USER_NAME, data: { size: 3, maxValue: 100 } });
+    sendJsonMessage({ action: "start", sender: USER_NAME, data: { size: PYRAMID_SIZE, maxValue: MAX_VALUE } });
     setShowErrorMessage(false)
   }
 

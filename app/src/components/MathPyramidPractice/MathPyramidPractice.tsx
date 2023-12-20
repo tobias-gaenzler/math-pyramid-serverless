@@ -8,14 +8,14 @@ import MathPyramidField, {
 import {
   Button,
 } from "@mui/material"
-import useWebSocket, { ReadyState } from "react-use-websocket"
+import useWebSocket from "react-use-websocket"
 import { MathPyramidModelData, Model } from "../../common/Model"
 import { SuccessDialog } from "../SuccessDialog/SuccessDialog"
-import { uniqueNamesGenerator, Config, names } from 'unique-names-generator';
+import ErrorMessage from "../ErrorMessage/ErrorMessage"
+import { UserNameProvider } from "../../service/UserNameProvider"
+import MathPyramidRow from "../MathPyramidRow/MathPyramidRow"
 
-const config: Config = { dictionaries: [names] };
-const USER_NAME: string = uniqueNamesGenerator(config);
-const ERROR_MESSAGE: string = 'Error while retrieving math pyramid data from API. Please try again later.';
+const USER_NAME: string = new UserNameProvider().getUserName();
 const WS_URL: string = process.env.REACT_APP_WS_URL ?? '';
 const PYRAMID_SIZE = 3;
 const MAX_VALUE = 100;
@@ -79,12 +79,12 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
         })
       }
     }
-    return inputCorrect
+    return inputCorrect;
   }
 
   const restart = () => {
     sendJsonMessage({ action: "start", sender: USER_NAME, data: { size: PYRAMID_SIZE, maxValue: MAX_VALUE } });
-    setShowErrorMessage(false)
+    setShowErrorMessage(false);
   }
 
   const closePopup = () => {
@@ -93,57 +93,23 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
   }
 
   function getRows() {
-    const rows: React.ReactElement[] = []
+    const rows: React.ReactElement[] = [];
     if (!model) {
       return rows;
     }
 
     for (let row = model.size - 1; row >= 0; row--) {
-      const fields: React.ReactElement[] = getFieldsForRow(row)
       rows.push(
-        <Box key={row} className="row">
-          {fields}
-        </Box>
-      )
+        <MathPyramidRow key={row} row={row} model={model} inputHandler={inputHandler} />
+      );
     }
     return rows
   }
 
-  function getFieldsForRow(row: number) {
-    const fields: React.ReactElement[] = []
-    if (!model) {
-      return fields;
-    }
 
-    for (let column = 0; column < model.size - row; column++) {
-      const index = model.getIndex(row, column)
-      fields.push(
-        <MathPyramidField
-          key={index}
-          index={index}
-          model={model}
-          inputHandler={inputHandler}
-        />
-      )
-    }
-    return fields
-  }
 
   return showErrorMessage ? (
-    <Stack
-      spacing={4}
-      justifyContent="center"
-      alignItems="center">
-      <div>
-        My name: {USER_NAME}
-      </div>
-      <div>
-        {ERROR_MESSAGE}
-      </div>
-      <Button color="primary" variant="contained" onClick={restart}>
-        Try again
-      </Button>
-    </Stack>
+    <ErrorMessage userName={USER_NAME} restart={restart} />
   ) : (
     <Stack
       spacing={4}

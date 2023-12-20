@@ -27,7 +27,7 @@ export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
 
         var message = "";
         if ("start" === routeKey) {
-            message = getNewGameMessage();
+            message = getNewGameMessage(event);
         } else {
             message = getBroadcastMessage(event);
         }
@@ -52,9 +52,10 @@ export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
 };
 
 
-function getNewGameMessage(): string {
-    const size = 3;
-    const maxValue = 100;
+function getNewGameMessage(event: APIGatewayProxyEvent): string {
+    const body = JSON.parse(event.body!);
+    const size = body.data.size;
+    const maxValue = JSON.parse(event.body!).data.maxValue;
     const solutionValues: number[] = factory.createRandomSolution(size, maxValue);
     const startValues: number[] = factory.getUniquelySolvableRandomStartValues(solutionValues);
 

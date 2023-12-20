@@ -23,7 +23,7 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
   const [solvedBy, setSolvedBy] = useState<string>("");
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
-  const { sendJsonMessage, lastJsonMessage} = useWebSocket<string>(
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket<string>(
     WS_URL,
     {
       onOpen: () => {
@@ -81,7 +81,7 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
   }
 
   const restart = () => {
-    sendJsonMessage({ action: "start", sender: USER_NAME })
+    sendJsonMessage({ action: "start", sender: USER_NAME, data: { size: 5, maxValue: 1000 } });
     setShowErrorMessage(false)
   }
 

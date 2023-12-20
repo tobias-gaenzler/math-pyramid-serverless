@@ -18,19 +18,19 @@ functions:
           path: /create
           method: post
   connectionHandler:
-    handler: src/websocket/handler.connectionHandler
+    handler: src/websocket/connection-handler.connectionHandler
     events:
       - websocket:
           route: $connect
       - websocket:
           route: $disconnect
   defaultHandler:
-    handler: src/websocket/handler.defaultHandler
+    handler: src/websocket/default-handler.defaultHandler
     events:
       - websocket:
           route: $default #simple event definition without extra route property
-  startGameHandler:
-    handler: src/websocket/handler.startHandler
+  broadcastHandler:
+    handler: src/websocket/broadcast-handler.broadcastHandler
     events:
       - websocket:
           route: start # will trigger if $request.body.action === "start"
@@ -51,12 +51,12 @@ resources:
     usersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: usersTable
+        TableName: playersTable
         AttributeDefinitions:
-          - AttributeName: email
+          - AttributeName: connectionid
             AttributeType: S
         KeySchema:
-          - AttributeName: email
+          - AttributeName: connectionid
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

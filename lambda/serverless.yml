@@ -11,12 +11,6 @@ provider:
       format: '{ "requestId":"$context.requestId",   "ip": "$context.identity.sourceIp" }'
 
 functions:
-  math-pyramid:
-    handler: src/rest/handler.createHandler
-    events:
-      - http:
-          path: /create
-          method: post
   connectionHandler:
     handler: src/websocket/connection-handler.connectionHandler
     events:
@@ -24,6 +18,8 @@ functions:
           route: $connect
       - websocket:
           route: $disconnect
+      - websocket:
+          route: username
   defaultHandler:
     handler: src/websocket/default-handler.defaultHandler
     events:
@@ -34,6 +30,8 @@ functions:
     events:
       - websocket:
           route: start # triggers if $request.body.action === "start"
+      - websocket:
+          route: message
 custom:
   serverless-offline:
     httpPort: 3001

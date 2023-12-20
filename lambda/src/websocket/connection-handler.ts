@@ -14,7 +14,10 @@ export const connectionHandler = async (event: APIGatewayProxyEvent) => {
             await addConnection(connectionId, dynamoDBClient);
         } else if ("$disconnect" === routeKey) {
             await removeConnection(connectionId, dynamoDBClient);
+        } else if ("username" === routeKey) {
+            await setUserName(event, connectionId, dynamoDBClient);
         }
+
         return {
             statusCode: 200,
             headers: HEADERS,
@@ -48,6 +51,32 @@ async function addConnection(connectionId: string, dynamoDBClient: DynamoDBClien
         console.log("Connection saved.");
     } catch (error) {
         console.error(`Error while saving connection: ${JSON.stringify(error)}`);
+        throw error;
+    }
+}
+
+async function setUserName(event: APIGatewayProxyEvent, connectionId: string, dynamoDBClient: DynamoDBClient) {
+    const userName = JSON.parse(event.body!).sender;
+    console.log(`\nSetting user name ${userName} for connection ${connectionId} ...\n`);
+
+    const input = {
+        "Item": {
+            "connectionid": {
+                "S": connectionId
+            },
+            "username": {
+                "S": userName
+            }
+        },
+        "TableName": "players"
+    };
+    const command = new PutItemCommand(input);
+
+    try {
+        await dynamoDBClient.send(command);
+        console.log("Connection saved.");
+    } catch (error) {
+        console.error(`Error while setting username: ${JSON.stringify(error)}`);
         throw error;
     }
 }

@@ -2,28 +2,22 @@ import { APIGatewayProxyEvent } from 'aws-lambda';
 import { ApiGatewayManagementApi } from "@aws-sdk/client-apigatewaymanagementapi";
 import { AttributeValue, DeleteItemCommand, DynamoDBClient, ScanCommand, ScanCommandOutput } from "@aws-sdk/client-dynamodb";
 import { HEADERS } from '../shared/headers';
-import { BroadcastMessage } from '../shared/broadcast-message';
+import { MathPyramidFactory } from '../math-pyramid/math-pyramid-factory';
 
 
-type MathPyramidModelData = {
-    size: number;
-    solutionValues: number[];
-    startValues: number[];
-}
-
-type MathPyramidMessage = {
-    action: string | undefined;
-    data: MathPyramidModelData | undefined;
-}
+const factory: MathPyramidFactory = new MathPyramidFactory();
 
 export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
     try {
-        const senderId = event.requestContext.connectionId;
-        console.log(`\nPerforming action "${event.requestContext.routeKey}" for connection ID ${senderId}\n`);
+        const connectionId = event.requestContext.connectionId;
+        const userName = JSON.parse(event.body!).sender
+        const routeKey = event.requestContext.routeKey;
+
+        console.log(`\nPerforming action "${routeKey}" from ${userName}/${connectionId}\n`);
 
         const dynamoDBClient = new DynamoDBClient({ region: "eu-central-1", endpoint: "http://localhost:3010" }); // TODO: use correct region and url (env)
 
-        const data = await getConnections(dynamoDBClient);
+        const connections = await getConnections(dynamoDBClient);
 
         const apiGatewayManagementApi = new ApiGatewayManagementApi({
             apiVersion: '2018-11-29',
@@ -31,8 +25,14 @@ export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
             endpoint: `ws://${event.requestContext.domainName}:3002`,
         });
 
-        const message = getMessage(event);
-        await Promise.all(data.Items!.map(async (connection: Record<string, AttributeValue>) => {
+        var message = "";
+        if ("start" === routeKey) {
+            message = getNewGameMessage();
+        } else {
+            message = getBroadcastMessage(event);
+        }
+
+        await Promise.all(connections.Items!.map(async (connection: Record<string, AttributeValue>) => {
             await sendMessageToConnection(message, connection, apiGatewayManagementApi, dynamoDBClient);
         }));
 
@@ -52,19 +52,23 @@ export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
 };
 
 
-function getMessage(event: APIGatewayProxyEvent): string {
-    const input = event.body;
-    if (isBroadcastMessage(input || "")) {
-        return input!;
-    } else {
-        const message = JSON.parse(input!) as MathPyramidMessage;
-        return JSON.stringify(message.data);
-    }
+function getNewGameMessage(): string {
+    const size = 3;
+    const maxValue = 100;
+    const solutionValues: number[] = factory.createRandomSolution(size, maxValue);
+    const startValues: number[] = factory.getUniquelySolvableRandomStartValues(solutionValues);
+
+    console.log(`Start values: ${JSON.stringify(startValues)}`);
+    console.log(`Solution values: ${JSON.stringify(solutionValues)}`);
+    return JSON.stringify({
+        size: size,
+        startValues: startValues,
+        solutionValues: solutionValues,
+    });
 }
 
-function isBroadcastMessage(jsonMessage: string): boolean {
-    const message = JSON.parse(jsonMessage) as BroadcastMessage;
-    return (message.message !== null && message.message !== undefined);
+function getBroadcastMessage(event: APIGatewayProxyEvent): string {
+    return event.body || "";
 }
 
 async function sendMessageToConnection(

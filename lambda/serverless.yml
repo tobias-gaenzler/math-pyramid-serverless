@@ -33,7 +33,7 @@ functions:
     handler: src/websocket/broadcast-handler.broadcastHandler
     events:
       - websocket:
-          route: start # will trigger if $request.body.action === "start"
+          route: start # triggers if $request.body.action === "start"
 custom:
   serverless-offline:
     httpPort: 3001

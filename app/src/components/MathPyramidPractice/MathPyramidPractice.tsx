@@ -8,11 +8,11 @@ import MathPyramidField, {
 import {
   Button,
 } from "@mui/material"
-import { Model } from "../../common"
-import { SuccessDialog } from ".."
 import useWebSocket, { ReadyState } from "react-use-websocket"
 import { RestService } from "../../service/rest-service";
-import { MathPyramidModelData } from "../../common/Model"
+import { MathPyramidModelData, Model } from "../../common/Model"
+import { BroadcastMessage } from "../../common/BroadcastMessage"
+import { SuccessDialog } from "../SuccessDialog/SuccessDialog"
 
 
 type MathPyramidPracticeProps = {
@@ -29,11 +29,15 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
   const [showErrorMessage, setShowErrorMessage] = useState(false)
   const restService: RestService = new RestService();
 
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket<MathPyramidModelData>(
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket<string>(
     WS_URL,
     {
       onOpen: () => {
         console.log('WebSocket connection established.')
+      },
+      onError: (error) => {
+        console.log(`Error in websocket connection: ${error}`);
+        setShowErrorMessage(true);
       },
       share: false,
       shouldReconnect: () => true,
@@ -44,14 +48,17 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
     console.log(`Connection state changed to: ${ReadyState[readyState]}`)
   }, [readyState])
 
-  // Run when a new WebSocket message is received
   useEffect(() => {
+    // Execute when a new WebSocket message is received
     if (lastJsonMessage) {
       console.log(`Received message: ${JSON.stringify(lastJsonMessage)}`)
-      const newModel = new Model(lastJsonMessage);
-      setModel(newModel)
-      setSolved(false)
-      setShowErrorMessage(false)
+      if (isBroadcastMessage(lastJsonMessage)) {
+      } else {
+        const newModel = new Model(JSON.parse(JSON.stringify(lastJsonMessage)!) as MathPyramidModelData);
+        setModel(newModel)
+        setSolved(false)
+        setShowErrorMessage(false)
+      }
     }
   }, [lastJsonMessage])
 
@@ -65,6 +72,13 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
     const inputCorrect = (model.solutionValues[index].toString() === inputValue)
     if (inputCorrect) {
       model.userInput[index] = parseInt(inputValue)
+      const isSolved = model.isSolved()
+      if (isSolved) {
+        sendJsonMessage({
+          action: "start",
+          data: new BroadcastMessage("Game Finished")
+        })
+      }
       setSolved(model.isSolved())
     }
     return inputCorrect
@@ -88,6 +102,11 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
 
   const closePopup = () => {
     setSolved(false)
+  }
+
+  function isBroadcastMessage(jsonMessage: string): boolean {
+    const message = JSON.parse(JSON.stringify(jsonMessage)) as BroadcastMessage;
+    return (message.message !== null && message.message !== undefined);
   }
 
   function getRows() {
@@ -125,22 +144,6 @@ const MathPyramidPractice: React.FC<MathPyramidPracticeProps> = ({ size, maxValu
       )
     }
     return fields
-  }
-
-  function getMathPyramidData(
-    size: number,
-    maxValue: number
-  ): void {
-    restService
-      .getMathPyramidModel(size, maxValue)
-      .then((data) => {
-        setModel(new Model(data))
-        setShowErrorMessage(false)
-      })
-      .catch((error) => {
-        setShowErrorMessage(true)
-        console.error(`Could not get math pyramid data from API: ${error}`)
-      })
   }
 
   return showErrorMessage ? (

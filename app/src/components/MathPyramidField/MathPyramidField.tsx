@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from "react"
 import "./MathPyramidField.css"
 import TextField from "@mui/material/TextField"
-import { Model } from "../../common"
+import { Model } from "../../common/Model"
 
 export interface MathPyramidFieldHandler {
   (index: number, inputValue: string): boolean

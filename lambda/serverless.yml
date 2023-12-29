@@ -38,10 +38,12 @@ custom:
     websocketPort: 3002
     lambdaPort: 3003
   serverless-dynamodb:
+    stages:
+      - dev
     start:
       port: 3010
       inMemory: true
-      docker: false
+      docker: true
       migrate: true
 
 resources:
@@ -59,6 +61,6 @@ resources:
         BillingMode: PAY_PER_REQUEST
 
 plugins:
-  - serverless-offline
   - serverless-esbuild
   - serverless-dynamodb
+  - serverless-offline

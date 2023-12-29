@@ -14,6 +14,7 @@ export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
         const routeKey = event.requestContext.routeKey;
 
         console.log(`\nPerforming action "${routeKey}" from ${userName}/${connectionId}\n`);
+        console.log(`Event: ${JSON.stringify(event)}`);
 
         const dynamoDBClient = new DynamoDBClient({ region: "eu-central-1", endpoint: "http://localhost:3010" }); // TODO: use correct region and url (env)
 
@@ -54,8 +55,8 @@ export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
 
 function getNewGameMessage(event: APIGatewayProxyEvent): string {
     const body = JSON.parse(event.body!);
-    const size = body.data.size;
-    const maxValue = body.data.maxValue;
+    const size: number = parseInt(body.data.size);
+    const maxValue: number = parseInt(body.data.maxValue);
     const solutionValues: number[] = factory.createRandomSolution(size, maxValue);
     const startValues: number[] = factory.getUniquelySolvableRandomStartValues(solutionValues);
 

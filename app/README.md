@@ -22,9 +22,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
   The page will reload if you make edits.
 
 ### Deployment
-During deployment the websocket connection needs to be set e.g. when the app is started:
+During deployment the websocket connection needs to be set e.g. when the app is build:
 ```
-REACT_APP_WS_URL=ws://<IP>:<PORT> npm start
+REACT_APP_WS_URL=ws://<IP>:<PORT> npm run build
 ```
 
   

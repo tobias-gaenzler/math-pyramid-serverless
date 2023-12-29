@@ -10,7 +10,7 @@ export const connectionHandler = async (event: APIGatewayProxyEvent) => {
         const routeKey = event.requestContext.routeKey;
         console.log(`\nPerforming action "${routeKey}" for connection ID ${connectionId}\n`);
 
-        const dynamoDBClient = new DynamoDBClient({ region: "local", endpoint: DYNAMODB_URL });
+        const dynamoDBClient = new DynamoDBClient({ region: "eu-central-1", endpoint: DYNAMODB_URL });
         if ("$connect" === routeKey) {
             await addConnection(connectionId, dynamoDBClient);
         } else if ("$disconnect" === routeKey) {

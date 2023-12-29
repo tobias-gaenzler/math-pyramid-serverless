@@ -12,7 +12,7 @@ provider:
 
 functions:
   connectionHandler:
-    handler: src/websocket/connection-handler.connectionHandler
+    handler: src/websocket/connection-handler.handler
     events:
       - websocket:
           route: $connect
@@ -21,12 +21,12 @@ functions:
       - websocket:
           route: username
   defaultHandler:
-    handler: src/websocket/default-handler.defaultHandler
+    handler: src/websocket/default-handler.handler
     events:
       - websocket:
           route: $default #simple event definition without extra route property
   broadcastHandler:
-    handler: src/websocket/broadcast-handler.broadcastHandler
+    handler: src/websocket/broadcast-handler.handler
     events:
       - websocket:
           route: start # triggers if $request.body.action === "start"

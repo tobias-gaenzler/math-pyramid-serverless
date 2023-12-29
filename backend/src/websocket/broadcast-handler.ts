@@ -4,10 +4,13 @@ import { AttributeValue, DeleteItemCommand, DynamoDBClient, ScanCommand, ScanCom
 import { HEADERS } from '../shared/headers';
 import { MathPyramidFactory } from '../math-pyramid/math-pyramid-factory';
 
+const DYNAMODB_ENDPOINT = process.env.DYNAMODB_URL ?? "http://localhost:3010";
+const PLAYERS_TABLE_NAME = process.env.PLAYERS_TABLE_NAME ?? "players";
+const APIGW_ENDPOINT = process.env.APIGW_ENDPOINT ?? "ws://localhost:3002";
 
 const factory: MathPyramidFactory = new MathPyramidFactory();
 
-export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
+export const handler = async (event: APIGatewayProxyEvent) => {
     try {
         const connectionId = event.requestContext.connectionId;
         const userName = JSON.parse(event.body!).sender
@@ -16,14 +19,16 @@ export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
         console.log(`\nPerforming action "${routeKey}" from ${userName}/${connectionId}\n`);
         console.log(`Event: ${JSON.stringify(event)}`);
 
-        const dynamoDBClient = new DynamoDBClient({ region: "eu-central-1", endpoint: "http://localhost:3010" }); // TODO: use correct region and url (env)
+        const dynamoDBClient = process.env.PLAYERS_TABLE_NAME ?
+            new DynamoDBClient({ region: "eu-central-1", apiVersion: "2012-08-10" }) // aws
+            : new DynamoDBClient({ region: "local", endpoint: DYNAMODB_ENDPOINT }); // local
 
         const connections = await getConnections(dynamoDBClient);
-
+        console.log(`Endpoint from request: ${event.requestContext.domainName}/${event.requestContext.stage}`);
+        console.log(`Endpoint from environment: ${APIGW_ENDPOINT}`);
         const apiGatewayManagementApi = new ApiGatewayManagementApi({
             apiVersion: '2018-11-29',
-            // TODO: env variable and check which URL is required when deployed (e.g. http://${domain}:3002/${stage})
-            endpoint: `ws://${event.requestContext.domainName}:3002`,
+            endpoint: APIGW_ENDPOINT
         });
 
         var message = "";
@@ -33,21 +38,44 @@ export const broadcastHandler = async (event: APIGatewayProxyEvent) => {
             message = event.body || "";
         }
 
-        await Promise.all(connections.Items!.map(async (connection: Record<string, AttributeValue>) => {
-            await sendMessageToConnection(message, connection, apiGatewayManagementApi, dynamoDBClient);
+        await Promise.all((connections.Items ?? []).map(async (connection: Record<string, AttributeValue>) => {
+            console.log(`Sending message ${message} to connection ${JSON.stringify(connection)}`);
+
+            const connectionId = connection.connectionid.S!;
+            const userName = connection.username ? connection.username.S : "unknown";
+            await apiGatewayManagementApi.postToConnection({ "ConnectionId": connectionId, "Data": message, })
+                .then(() => {
+                    console.log(`Message sent to ${userName}/${connectionId}`);
+                })
+                .catch((err: any) => {
+                    console.error(`Error when sending message to ${userName}/${connectionId}: ${JSON.stringify(err)}`);
+                    if (err.name === "410") { // TODO: check if this works when deployed
+                        console.log(`Found stale connection, deleting ${connectionId}`);
+                        dynamoDBClient.send(new DeleteItemCommand({
+                            "Key": {
+                                "connectionid": {
+                                    "S": connectionId
+                                }
+                            },
+                            "TableName": PLAYERS_TABLE_NAME
+                        }));
+                    }
+                });
         }));
 
         return {
-            statusCode: 200,
-            headers: HEADERS,
-            body: {}
+            "isBase64Encoded": false,
+            "statusCode": 200,
+            "headers": HEADERS,
+            "body": JSON.stringify({})
         };
     } catch (err) {
         console.error(err);
         return {
-            statusCode: 500,
-            headers: HEADERS,
-            body: `{ "message": "${err}" }`
+            "isBase64Encoded": false,
+            "statusCode": 500,
+            "headers": HEADERS,
+            "body": JSON.stringify({ "message": `"${JSON.stringify(err)}"` })
         };
     }
 };
@@ -69,39 +97,9 @@ function getNewGameMessage(event: APIGatewayProxyEvent): string {
     });
 }
 
-async function sendMessageToConnection(
-    message: string,
-    connection: Record<string, AttributeValue>,
-    apiGatewayManagementApi: ApiGatewayManagementApi,
-    dynamoDBClient: DynamoDBClient
-) {
-    if (!connection.connectionid || !connection.connectionid.S) {
-        return;
-    }
-    const connectionId = connection.connectionid.S!;
-    const userName = connection.username ? connection.username.S : "unknown";
-    await apiGatewayManagementApi.postToConnection({ "ConnectionId": connectionId, "Data": message, })
-        .then(() => {
-            console.log(`Message sent to ${userName}/${connectionId}`);
-        })
-        .catch((err: any) => {
-            if (err.name === "410") { // TODO: check if this works when deployed
-                console.log(`Found stale connection, deleting ${connectionId}`);
-                dynamoDBClient.send(new DeleteItemCommand({
-                    "Key": {
-                        "connectionid": {
-                            "S": connectionId
-                        }
-                    },
-                    "TableName": "players"
-                }));
-            }
-        });
-}
-
 async function getConnections(dynamoDBClient: DynamoDBClient): Promise<ScanCommandOutput> {
     console.log('Retrieving active connections...');
-    const params = { "TableName": "players" };
+    const params = { "TableName": PLAYERS_TABLE_NAME };
     const command = new ScanCommand(params);
     return await dynamoDBClient.send(command);
 }

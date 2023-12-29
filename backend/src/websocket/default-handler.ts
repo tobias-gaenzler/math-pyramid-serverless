@@ -2,21 +2,23 @@ import { APIGatewayProxyEvent } from 'aws-lambda';
 import { HEADERS } from '../shared/headers';
 
 
-export const defaultHandler = async (event: APIGatewayProxyEvent) => {
+export const handler = async (event: APIGatewayProxyEvent) => {
     try {
         const connectionId = event.requestContext.connectionId;
         console.log(`\nDefault Handler received request with route "${event.requestContext.routeKey}" for connection ID ${connectionId}\n`);
         return {
-            statusCode: 200,
-            headers: HEADERS,
-            body: {}
+            "isBase64Encoded": false,
+            "statusCode": 200,
+            "headers": HEADERS,
+            "body": JSON.stringify({})
         };
     } catch (err) {
         console.error(err);
         return {
-            statusCode: 500,
-            headers: HEADERS,
-            body: `{ "message": "${err}" }`
+            "isBase64Encoded": false,
+            "statusCode": 500,
+            "headers": HEADERS,
+            "body": JSON.stringify({ "message": `"${JSON.stringify(err)}"` })
         };
     }
 };

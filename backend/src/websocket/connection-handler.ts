@@ -2,15 +2,18 @@ import { APIGatewayProxyEvent } from 'aws-lambda';
 import { HEADERS } from '../shared/headers';
 import { $Command, DeleteItemCommand, DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 
-const DYNAMODB_URL = process.env.DYNAMODB_URL ?? "http://localhost:3010";
+const DYNAMODB_ENDPOINT = process.env.DYNAMODB_URL ?? "http://localhost:3010";
+const PLAYERS_TABLE_NAME = process.env.PLAYERS_TABLE_NAME ?? "players";
 
-export const connectionHandler = async (event: APIGatewayProxyEvent) => {
+export const handler = async (event: APIGatewayProxyEvent) => {
     try {
         const connectionId = event.requestContext.connectionId || "";
         const routeKey = event.requestContext.routeKey;
-        console.log(`\nPerforming action "${routeKey}" for connection ID ${connectionId}\n`);
+        console.log(`\nPerforming action "${routeKey}" for connection ID ${connectionId} on table ${PLAYERS_TABLE_NAME}\n`);
 
-        const dynamoDBClient = new DynamoDBClient({ region: "eu-central-1", endpoint: DYNAMODB_URL });
+        const dynamoDBClient = process.env.PLAYERS_TABLE_NAME ?
+            new DynamoDBClient({ region: "eu-central-1", apiVersion: "2012-08-10" }) // aws
+            : new DynamoDBClient({ region: "local", endpoint: DYNAMODB_ENDPOINT }); // local
         if ("$connect" === routeKey) {
             await addConnection(connectionId, dynamoDBClient);
         } else if ("$disconnect" === routeKey) {
@@ -20,16 +23,18 @@ export const connectionHandler = async (event: APIGatewayProxyEvent) => {
         }
 
         return {
-            statusCode: 200,
-            headers: HEADERS,
-            body: {}
+            "isBase64Encoded": false,
+            "statusCode": 200,
+            "headers": HEADERS,
+            "body": JSON.stringify({})
         };
     } catch (err) {
         console.error(err);
         return {
-            statusCode: 500,
-            headers: HEADERS,
-            body: `{ "message": "${err}" }`
+            "isBase64Encoded": false,
+            "statusCode": 500,
+            "headers": HEADERS,
+            "body": JSON.stringify({ "message": `"${JSON.stringify(err)}"` })
         };
     }
 };
@@ -43,7 +48,7 @@ async function addConnection(connectionId: string, dynamoDBClient: DynamoDBClien
                 "S": connectionId
             }
         },
-        "TableName": "players"
+        "TableName": PLAYERS_TABLE_NAME
     };
     const command = new PutItemCommand(input);
     await sendCommand(dynamoDBClient, command, "Connection saved.", "Error while saving connection");
@@ -62,7 +67,7 @@ async function setUserName(event: APIGatewayProxyEvent, connectionId: string, dy
                 "S": userName
             }
         },
-        "TableName": "players"
+        "TableName": PLAYERS_TABLE_NAME
     };
     const command = new PutItemCommand(input);
     await sendCommand(dynamoDBClient, command, "Setting user name.", "Error while setting username");
@@ -76,7 +81,7 @@ async function removeConnection(connectionId: string, dynamoDBClient: DynamoDBCl
                 "S": connectionId
             }
         },
-        "TableName": "players"
+        "TableName": PLAYERS_TABLE_NAME
     };
     const command = new DeleteItemCommand(params);
     await sendCommand(dynamoDBClient, command, "Connection removed.", "Error while removing connection");

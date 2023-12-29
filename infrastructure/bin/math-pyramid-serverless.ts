@@ -4,6 +4,7 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { WebsocketStack } from '../lib/websocket-stack';
 import { DatabaseStack } from '../lib/database-stack';
+import { UIStack } from '../lib/ui-stack';
 
 /* If you don't specify 'env', this stack will be environment-agnostic.
  * Account/Region-dependent features and context lookups will not work,
@@ -32,3 +33,8 @@ const websocketApiStack = new WebsocketStack(app, 'WebsocketStack', {
     playersTable: databaseStack.playersTable
 });
 websocketApiStack.addDependency(databaseStack);
+
+const uiStack = new UIStack(app, 'UIStack', {
+    websocketApi: websocketApiStack.webSocketApi
+});
+uiStack.addDependency(websocketApiStack);

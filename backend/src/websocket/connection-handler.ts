@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent } from 'aws-lambda';
 import { HEADERS } from '../shared/headers';
 import { $Command, DeleteItemCommand, DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 
+const DYNAMODB_URL = process.env.DYNAMODB_URL ??  "http://localhost:3010";
 
 export const connectionHandler = async (event: APIGatewayProxyEvent) => {
     try {
@@ -9,7 +10,7 @@ export const connectionHandler = async (event: APIGatewayProxyEvent) => {
         const routeKey = event.requestContext.routeKey;
         console.log(`\nPerforming action "${routeKey}" for connection ID ${connectionId}\n`);
 
-        const dynamoDBClient = new DynamoDBClient({ region: "local", endpoint: "http://localhost:3010" }); // TODO configurable
+        const dynamoDBClient = new DynamoDBClient({ region: "local", endpoint: DYNAMODB_URL});
         if ("$connect" === routeKey) {
             await addConnection(connectionId, dynamoDBClient);
         } else if ("$disconnect" === routeKey) {

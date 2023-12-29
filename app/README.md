@@ -8,7 +8,7 @@ In contrast to [math-pyramid-react](https://github.com/tobias-gaenzler/math-pyra
 
 ### Typescript
 
-The application is implemented in typescript and uses AWS serverless services like <i>lambda</i> as a backend.
+The application is implemented in typescript and uses AWS serverless services <i>API Gateway, lambda and DynamoDB</i> as a backend.
 
 ### React Scripts
 

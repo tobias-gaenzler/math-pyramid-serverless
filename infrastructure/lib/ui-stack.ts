@@ -4,6 +4,7 @@ import { Construct } from 'constructs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { AwsCustomResource } from 'aws-cdk-lib/custom-resources';
 import { WebSocketApi } from 'aws-cdk-lib/aws-apigatewayv2';
+import { getCertificateRegion } from 'aws-cdk-lib/aws-certificatemanager';
 
 export interface UIProps extends StackProps {
     websocketApi: WebSocketApi
@@ -39,7 +40,7 @@ export class UIStack extends Stack {
         // const appConfig = {
         //     REACT_APP_WS_URL: props?.websocketApi.apiEndpoint
         // };
-        // console.log(props?.websocketApi); // TODO: remove
+        // console.log(props?.websocketApi.apiEndpoint); // TODO: remove
 
         // new BucketDeployment(this, `DeployMathPyramidConfig-${new Date().toISOString()}`, {
         //     sources: [Source.jsonData('config.json', appConfig)],
@@ -48,5 +49,6 @@ export class UIStack extends Stack {
         // });
 
         new CfnOutput(this, 'Bucket URL', { value: mathPyramidServerlessBucket.bucketWebsiteUrl });
+        new CfnOutput(this, 'API Endpoint', { value: props?.websocketApi.apiEndpoint! });
     }
 };

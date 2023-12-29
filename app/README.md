@@ -19,10 +19,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
   Runs the app in the development mode.\
   Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-  The page will reload if you make edits.\
-  You will also see any lint errors in the console.
+  The page will reload if you make edits.
 
-- `npm deploy`
-  
-  Builds the app, commits the created artifacts to the 'gh-pages' branch from where it is deployed to github pages automatically by github (github pages configuration).
+### Deployment
+During deployment the websocket connection needs to be set e.g. when the app is started:
+```
+REACT_APP_WS_URL=ws://<IP>:<PORT> npm start
+```
+
   

@@ -7,7 +7,6 @@ import { MathPyramidModelData, Model } from "../../common/Model"
 import { SuccessDialog } from "../GameSolvedDialog/GameSolvedDialog"
 import ErrorMessage from "../ErrorMessage/ErrorMessage"
 import { UserNameProvider } from "../../service/UserNameProvider"
-import MathPyramidRow from "../MathPyramidRow/MathPyramidRow"
 import MathPyramid from "../MathPyramid/MathPyramid"
 
 const USER_NAME: string = new UserNameProvider().getUserName();

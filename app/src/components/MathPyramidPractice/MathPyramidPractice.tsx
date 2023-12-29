@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from "react"
-import "./MathPyramidPractice.css"
 import Stack from "@mui/material/Stack"
 import { MathPyramidFieldHandler, } from "../MathPyramidField/MathPyramidField"
-import {
-  Button, DialogProps, TextField,
-} from "@mui/material"
+import { Button } from "@mui/material"
 import useWebSocket from "react-use-websocket"
 import { MathPyramidModelData, Model } from "../../common/Model"
 import { SuccessDialog } from "../GameSolvedDialog/GameSolvedDialog"
 import ErrorMessage from "../ErrorMessage/ErrorMessage"
 import { UserNameProvider } from "../../service/UserNameProvider"
 import MathPyramidRow from "../MathPyramidRow/MathPyramidRow"
+import MathPyramid from "../MathPyramid/MathPyramid"
 
 const USER_NAME: string = new UserNameProvider().getUserName();
-const WS_URL: string = process.env.REACT_APP_WS_URL ?? '';
-const PYRAMID_SIZE = 3;
-const MAX_VALUE = 100;
+const WS_URL: string = process.env.REACT_APP_WS_URL ?? 'ws://127.0.0.1:3002';
+const PYRAMID_SIZE: string = process.env.REACT_APP_DEFAULT_SIZE ?? '3';
+const MAX_VALUE: string = process.env.REACT_APP_MAX_VALUE ?? '100';
 
 const MathPyramidPractice: React.FC<{}> = ({ }) => {
   const [model, setModel] = useState<(Model | null)>();
@@ -32,8 +30,8 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
           sender: USER_NAME
         })
       },
-      onError: (error) => {
-        console.log(`Error in websocket connection: ${error}`);
+      onError: (event: WebSocketEventMap['error']): void => {
+        console.error(`Error in websocket connection: ${JSON.stringify(event)}`);
         setShowErrorMessage(true);
       },
       share: false,
@@ -48,6 +46,7 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
       console.log(`Received message: ${message}`)
       if (message.includes("\"action\":\"message\"")) {
         setSolvedBy(JSON.parse(message).sender);
+        setShowErrorMessage(false);
       } else {
         const newModel = new Model(JSON.parse(message) as MathPyramidModelData);
         setModel(newModel)
@@ -75,7 +74,6 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
 
   const restart = () => {
     sendJsonMessage({ action: "start", sender: USER_NAME, data: { size: PYRAMID_SIZE, maxValue: MAX_VALUE } });
-    setShowErrorMessage(false);
   }
 
   const closePopup = () => {
@@ -83,39 +81,25 @@ const MathPyramidPractice: React.FC<{}> = ({ }) => {
     setModel(null);
   }
 
-  function getRows() {
-    const rows: React.ReactElement[] = [];
-    if (!model) {
-      return rows;
-    }
-
-    for (let row = model.size - 1; row >= 0; row--) {
-      rows.push(
-        <MathPyramidRow key={row} row={row} model={model} inputHandler={inputHandler} />
-      );
-    }
-    return rows
-  }
-
-
-
-  return showErrorMessage ? (
-    <ErrorMessage userName={USER_NAME} restart={restart} />
-  ) : (
-    <Stack
-      spacing={4}
-      justifyContent="center"
-      alignItems="center"
-      className="math-pyramid"
-    >
-      <div>Player name: <b>{USER_NAME}</b></div>
-      {getRows()}
-      <SuccessDialog onClose={closePopup} solvedBy={solvedBy} userName={USER_NAME} />
-      <Button color="primary" variant="contained" onClick={restart}>
-        {model == null ? 'Start' : 'Restart'}
-      </Button>
-    </Stack>
-  )
+  return showErrorMessage ?
+    (
+      <ErrorMessage userName={USER_NAME} restart={restart} />
+    ) :
+    (
+      <Stack
+        spacing={4}
+        justifyContent="center"
+        alignItems="center"
+        className="math-pyramid"
+      >
+        <div>Player name: <b>{USER_NAME}</b></div>
+        <MathPyramid model={model} inputHandler={inputHandler} />
+        <SuccessDialog onClose={closePopup} solvedBy={solvedBy} userName={USER_NAME} />
+        <Button color="primary" variant="contained" onClick={restart}>
+          {model == null ? 'Start' : 'Restart'}
+        </Button>
+      </Stack>
+    )
 }
 
 export default MathPyramidPractice

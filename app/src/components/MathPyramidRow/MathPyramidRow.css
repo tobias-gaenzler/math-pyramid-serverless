@@ -1,36 +1,4 @@
-.pyramid-field input {
-  font-weight: bold;
-  color: gray;
-  text-align: center;
-}
-
-.pyramid-field.MuiTextField-root {
-  margin-top: 1em;
-  margin-bottom: 1em;
-  width: 5em;
-  height: 2.5em;
-  font-weight: bold;
-  color: gray;
-}
-@media only screen and (max-width: 549px) {
-  .pyramid-field.MuiTextField-root {
-    margin-right: 1.25em;
-    margin-left: 1.25em;
-  }
-}
-@media only screen and (min-width: 550px) {
-  .pyramid-field.MuiTextField-root {
-    margin-right: 3em;
-    margin-left: 3em;
-  }
-}
-
-.pyramid-field.disabled .MuiInputBase-root {
-  background-color: lightgray;
-}
-.pyramid-field.correct .MuiInputBase-root {
-  background-color: lightgreen;
-}
-.pyramid-field.incorrect .MuiInputBase-root {
-  background-color: lightpink;
+.row {
+  display: inline-flex;
+  flex-direction: row;
 }

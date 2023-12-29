@@ -1,6 +1,6 @@
 import React from "react"
-import "./MathPyramidRow.css"
 import { Model } from "../../common/Model"
+import "./MathPyramidRow.css"
 import { Box } from "@mui/material"
 import MathPyramidField, { MathPyramidFieldHandler } from "../MathPyramidField/MathPyramidField"
 

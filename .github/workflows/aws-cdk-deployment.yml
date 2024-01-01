@@ -52,9 +52,7 @@ jobs:
     - name: CDK deploy
       run: |
         cd infrastructure
-        # cdk deploy --all --require-approval=never
-        cdk synth
-        cdk deploy DatabaseStack --require-approval=never
+        cdk deploy --all --require-approval=never
 
     - name: UI build and deploy
       run: |

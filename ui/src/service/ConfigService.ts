@@ -6,7 +6,9 @@ class ConfigService {
     public static getConfig(configVariable: string): string {
         switch (configVariable) {
             case "WS_URL": {
-                return REACT_APP_WS_URL ?? (process.env.REACT_APP_WS_URL ?? "ws://127.0.0.1:3002");
+                const wsURL = REACT_APP_WS_URL ?? (process.env.REACT_APP_WS_URL ?? "ws://127.0.0.1:3002");
+                console.log(wsURL);
+                return wsURL;
             }
             case "PYRAMID_SIZE": {
                 return REACT_APP_DEFAULT_SIZE ?? (process.env.REACT_APP_DEFAULT_SIZE ?? "3");

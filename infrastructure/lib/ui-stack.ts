@@ -50,7 +50,7 @@ export class UIStack extends Stack {
                                 return false;
                             }
                             execSync(
-                                `cd ../ui && pwd && REACT_APP_WS_URL='${props?.websocketApi.apiEndpoint}' npm run build`,
+                                `cd ../ui && pwd && npm run build`,
                                 execOptions
                             );
                             copySync('../ui/build', outputDir);
@@ -61,7 +61,8 @@ export class UIStack extends Stack {
                 },
             })],
             destinationBucket: mathPyramidServerlessBucket,
-            prune: false
+            prune: false,
+            exclude: ['env.js']
         });
 
 
@@ -71,9 +72,9 @@ export class UIStack extends Stack {
                 service: 'S3',
                 action: 'putObject',
                 parameters: {
-                    Body: `window.REACT_APP_WS_URL="${props?.websocketApi.apiEndpoint}";\nwindow.REACT_APP_DEFAULT_SIZE="3";\nwindow.REACT_APP_MAX_VALUE="100";`,
+                    Body: `window.REACT_APP_WS_URL="${props?.websocketApi.apiEndpoint}/DEV";\nwindow.REACT_APP_DEFAULT_SIZE="3";\nwindow.REACT_APP_MAX_VALUE="100";`,
                     Bucket: mathPyramidServerlessBucket.bucketName,
-                    Key: 'config.json',
+                    Key: 'env.js',
                 },
                 physicalResourceId: PhysicalResourceId.of(
                     Date.now().toString(),

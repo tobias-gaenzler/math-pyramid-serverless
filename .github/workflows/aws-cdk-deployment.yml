@@ -33,7 +33,7 @@ jobs:
     - name: Install CDK
       run: |
         npm install -g aws-cdk
-        
+
     - name: Install typescript
       run: |
         npm install -g typescript
@@ -49,10 +49,23 @@ jobs:
         cd infrastructure
         cdk bootstrap --require-approval=never
 
-    - name: CDK deploy
-      run: |
-        cd infrastructure
-        cdk deploy --all --require-approval=never
+    - name: Deploy LambdaStack (via CDK)
+      uses: youyo/aws-cdk-github-actions@v2
+      with:
+        cdk_subcommand: 'deploy'
+        cdk_stack: '*'
+        cdk_args: '--require-approval never'
+        actions_comment: false
+        working_dir: 'infrastructure'
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}        
+
+    # - name: CDK deploy
+    #   run: |
+    #     cd infrastructure
+    #     cdk deploy --all --require-approval=never
 
     - name: UI build and deploy
       run: |

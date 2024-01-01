@@ -36,7 +36,8 @@ jobs:
 
     - name: Install typescript
       run: |
-        npm install -g typescript
+        cd infrastructure
+        npm install typescript
   
     - name: 'Resolve Project Dependencies in infrastructure using Npm'
       shell: bash

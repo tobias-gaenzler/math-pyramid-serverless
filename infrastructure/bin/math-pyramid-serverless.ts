@@ -34,7 +34,4 @@ const websocketApiStack = new WebsocketStack(app, 'WebsocketStack', {
 });
 websocketApiStack.addDependency(databaseStack);
 
-const uiStack = new UIStack(app, 'UIStack', {
-    websocketApi: websocketApiStack.webSocketApi
-});
-uiStack.addDependency(websocketApiStack);
+new UIStack(app, 'UIStack');

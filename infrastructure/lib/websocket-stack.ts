@@ -91,7 +91,7 @@ export class WebsocketStack extends Stack {
             integration: new WebSocketLambdaIntegration('DisconnectIntegration', connectHandler),
         });
         this.webSocketApi.addRoute('username', {
-            integration: new WebSocketLambdaIntegration('ConnectIntegration', connectHandler),
+            integration: new WebSocketLambdaIntegration('UsernameIntegration', connectHandler),
         });
         this.webSocketApi.addRoute('start', {
             integration: new WebSocketLambdaIntegration('StartIntegration', broadcastHandler),

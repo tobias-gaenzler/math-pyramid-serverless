@@ -33,6 +33,9 @@ jobs:
     - name: Install CDK
       run: |
         npm install -g aws-cdk
+    - name: Install typescript
+      run: |
+        npm install -g typescript
   
     - name: 'Resolve Project Dependencies in infrastructure using Npm'
       shell: bash

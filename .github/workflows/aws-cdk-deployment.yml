@@ -49,10 +49,10 @@ jobs:
         cd infrastructure
         cdk bootstrap --require-approval=never
 
-    - name: CDK deploy
-      run: |
-        cd infrastructure
-        cdk deploy --all --require-approval=never
+    # - name: CDK deploy
+    #   run: |
+    #     cd infrastructure
+    #     cdk deploy --all --require-approval=never
 
     - name: UI build and deploy
       run: |

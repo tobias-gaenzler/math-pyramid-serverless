@@ -2,9 +2,10 @@ import { CfnOutput, DockerImage, RemovalPolicy, Stack, StackProps } from 'aws-cd
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import { AwsCustomResource } from 'aws-cdk-lib/custom-resources';
 import { WebSocketApi } from 'aws-cdk-lib/aws-apigatewayv2';
-import { getCertificateRegion } from 'aws-cdk-lib/aws-certificatemanager';
+import { execSync, ExecSyncOptions } from 'child_process';
+import { copySync } from 'fs-extra';
+import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from 'aws-cdk-lib/custom-resources';
 
 export interface UIProps extends StackProps {
     websocketApi: WebSocketApi
@@ -30,23 +31,58 @@ export class UIStack extends Stack {
             websiteIndexDocument: "index.html"
         });
 
+        const execOptions: ExecSyncOptions = { stdio: 'inherit' };
 
         new BucketDeployment(this, `DeployMathPyramid-${new Date().toISOString()}`, {
-            sources: [Source.asset("../ui/build")],
+            sources: [Source.asset("../ui/build", {
+                bundling: {
+                    command: [
+                        'sh',
+                        '-c',
+                        'echo "Docker build not supported. Please install esbuild."',
+                    ],
+                    image: DockerImage.fromRegistry('alpine'),
+                    local: {
+                        tryBundle(outputDir: string) {
+                            try {
+                                execSync('npm --version', execOptions);
+                            } catch {
+                                return false;
+                            }
+                            execSync(
+                                `cd ../ui && pwd && REACT_APP_WS_URL='${props?.websocketApi.apiEndpoint}' npm run build`,
+                                execOptions
+                            );
+                            copySync('../ui/build', outputDir);
+
+                            return true;
+                        },
+                    },
+                },
+            })],
             destinationBucket: mathPyramidServerlessBucket,
             prune: false
         });
 
-        // const appConfig = {
-        //     REACT_APP_WS_URL: props?.websocketApi.apiEndpoint
-        // };
-        // console.log(props?.websocketApi.apiEndpoint); // TODO: remove
 
-        // new BucketDeployment(this, `DeployMathPyramidConfig-${new Date().toISOString()}`, {
-        //     sources: [Source.jsonData('config.json', appConfig)],
-        //     destinationBucket: mathPyramidServerlessBucket,
-        //     prune: false
-        // });
+        new AwsCustomResource(this, 'ConfigFrontEnd', {
+            installLatestAwsSdk: false,
+            onUpdate: {
+                service: 'S3',
+                action: 'putObject',
+                parameters: {
+                    Body: `window.REACT_APP_WS_URL="${props?.websocketApi.apiEndpoint}";\nwindow.REACT_APP_DEFAULT_SIZE="3";\nwindow.REACT_APP_MAX_VALUE="100";`,
+                    Bucket: mathPyramidServerlessBucket.bucketName,
+                    Key: 'config.json',
+                },
+                physicalResourceId: PhysicalResourceId.of(
+                    Date.now().toString(),
+                ),
+            },
+            policy: AwsCustomResourcePolicy.fromSdkCalls({
+                resources: AwsCustomResourcePolicy.ANY_RESOURCE,
+            }),
+        });
 
         new CfnOutput(this, 'Bucket URL', { value: mathPyramidServerlessBucket.bucketWebsiteUrl });
         new CfnOutput(this, 'API Endpoint', { value: props?.websocketApi.apiEndpoint! });

@@ -1,8 +1,6 @@
 name: Deploy Math Pyramid Serverless to AWS
 
-on:
-  push:
-    branches: ["main"]
+on: workflow_dispatch
 
 env:
   NODE_VERSION: '20.x'

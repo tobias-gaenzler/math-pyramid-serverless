@@ -49,12 +49,15 @@ jobs:
       run: |
         cd infrastructure
         cdk bootstrap --require-approval=never 
-        cat /home/runner/.npm/_logs/*
 
     - name: CDK deploy
       run: |
         cd infrastructure
         cdk deploy --all --require-approval=never -vvv || true
+
+    - name: Show logs
+      run: |
+        cat /home/runner/.npm/_logs/*
 
     - name: UI build and deploy
       run: |

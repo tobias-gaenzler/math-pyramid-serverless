@@ -9,8 +9,9 @@ const GameSolvedDialog: React.FC<Props> = ({ onClose, solvedBy, userName }: Prop
   const solvedByCurrentPlayer = (userName === solvedBy);
   const title = (solvedByCurrentPlayer ? "YOU" : solvedBy) + " solved the pyramid!";
   const severity = solvedByCurrentPlayer ? "success" : "error";
-  return solvedBy !== "" ? (
-    <Dialog open={true}>
+
+  return (
+    <Dialog open={solvedBy !== ""}>
       <DialogContent>
         <Alert variant="filled" severity={severity}>
           <AlertTitle>{title}</AlertTitle>
@@ -20,7 +21,7 @@ const GameSolvedDialog: React.FC<Props> = ({ onClose, solvedBy, userName }: Prop
         <Button onClick={onClose}>Close</Button>
       </DialogActions>
     </Dialog>
-  ) : (<> </>)
+  )
 }
 
 export { GameSolvedDialog as SuccessDialog }

@@ -11,7 +11,7 @@ const GameSolvedDialog: React.FC<Props> = ({ onClose, solvedBy, userName }: Prop
   const severity = solvedByCurrentPlayer ? "success" : "error";
 
   return (
-    <Dialog open={solvedBy !== ""}>
+    <Dialog data-testid="gameSolvedDialog" open={solvedBy !== ""}>
       <DialogContent>
         <Alert variant="filled" severity={severity}>
           <AlertTitle>{title}</AlertTitle>
@@ -24,4 +24,4 @@ const GameSolvedDialog: React.FC<Props> = ({ onClose, solvedBy, userName }: Prop
   )
 }
 
-export { GameSolvedDialog as SuccessDialog }
+export { GameSolvedDialog }

@@ -4,7 +4,7 @@ import { MathPyramidFieldHandler } from "../MathPyramidField/MathPyramidField";
 import { Button } from "@mui/material";
 import useWebSocket from "react-use-websocket";
 import { MathPyramidModelData, Model } from "../../common/Model";
-import { SuccessDialog } from "../GameSolvedDialog/GameSolvedDialog";
+import { GameSolvedDialog } from "../GameSolvedDialog/GameSolvedDialog";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { UserNameProvider } from "../../service/UserNameProvider";
 import MathPyramid from "../MathPyramid/MathPyramid";
@@ -99,7 +99,7 @@ const MathPyramidPractice: React.FC<{}> = () => {
         Player name: <b>{USER_NAME}</b>
       </div>
       <MathPyramid model={model} inputHandler={inputHandler} />
-      <SuccessDialog
+      <GameSolvedDialog
         onClose={closePopup}
         solvedBy={solvedBy}
         userName={USER_NAME}

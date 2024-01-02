@@ -38,7 +38,13 @@ jobs:
       run: |
         cd infrastructure
         npm install typescript
-  
+
+    - name: Resolve backend dependencies
+      shell: bash
+      run: |
+        cd backend
+        npm install
+
     - name: 'Resolve Project Dependencies in infrastructure using Npm'
       shell: bash
       run: |
@@ -53,11 +59,7 @@ jobs:
     - name: CDK deploy
       run: |
         cd infrastructure
-        cdk deploy --all --require-approval=never -vvv || true
-
-    - name: Show logs
-      run: |
-        cat /home/runner/.npm/_logs/*
+        cdk deploy --all --require-approval=never
 
     - name: UI build and deploy
       run: |

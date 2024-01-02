@@ -13,7 +13,7 @@ class ConfigService {
                 return process.env.REACT_APP_MAX_VALUE ?? "100";
             }
             default: {
-                throw (`Variable ${configVariable} is not a supported config variable.`);
+                throw new Error(`Variable ${configVariable} is not a supported config variable.`);
             }
         }
     }

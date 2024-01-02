@@ -15,7 +15,7 @@ const WS_URL: string = ConfigService.getConfig("WS_URL");
 const PYRAMID_SIZE: string = ConfigService.getConfig("PYRAMID_SIZE");
 const MAX_VALUE: string = ConfigService.getConfig("MAX_VALUE");
 
-const MathPyramidPractice: React.FC<{}> = ({}) => {
+const MathPyramidPractice: React.FC<{}> = () => {
   const [model, setModel] = useState<Model | null>();
   const [solvedBy, setSolvedBy] = useState<string>("");
   const [showErrorMessage, setShowErrorMessage] = useState(false);

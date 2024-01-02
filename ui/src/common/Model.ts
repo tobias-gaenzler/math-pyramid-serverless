@@ -1,17 +1,22 @@
 interface MathPyramidModelData {
   size: number;
   solutionValues: number[];
-  startValues: number[];
+  startValues: Array<number | null>;
 }
 
 class Model {
   size: number;
-  solutionValues: number[];
-  startValues: number[];
-  userInput: number[];
+  solutionValues: Array<number>;
+  startValues: Array<number | null>;
+  userInput: Array<number | null>;
   constructor(
     data: MathPyramidModelData
   ) {
+    const hasNullValue: number | undefined = data.solutionValues.find((value) => !value);
+    if (hasNullValue !== undefined && hasNullValue > -1) {
+      throw new Error(`Solution must not contain null values: ${JSON.stringify(data.solutionValues)}`);
+    }
+
     this.size = data.size;
     this.solutionValues = data.solutionValues;
     this.startValues = data.startValues;

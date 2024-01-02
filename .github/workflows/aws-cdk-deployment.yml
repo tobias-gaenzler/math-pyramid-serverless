@@ -45,7 +45,7 @@ jobs:
         cd backend
         npm install
 
-    - name: 'Resolve Project Dependencies in infrastructure using Npm'
+    - name: 'Resolve infrastructure dependencies'
       shell: bash
       run: |
         cd infrastructure

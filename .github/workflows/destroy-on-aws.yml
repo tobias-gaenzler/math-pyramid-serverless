@@ -1,0 +1,62 @@
+name: Destroy Math Pyramid Serverless on AWS
+
+on: workflow_dispatch
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEFAULT_ACCOUNT }}
+      CDK_DEFAULT_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+
+    - name: Setup Node ${{ env.NODE_VERSION }} Environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Install CDK
+      run: |
+        npm install -g aws-cdk
+
+    - name: Install typescript
+      run: |
+        cd infrastructure
+        npm install typescript
+
+    - name: Resolve backend dependencies
+      shell: bash
+      run: |
+        cd backend
+        npm install
+
+    - name: 'Resolve infrastructure dependencies'
+      shell: bash
+      run: |
+        cd infrastructure
+        npm install
+
+    - name: Bootstrap
+      run: |
+        cd infrastructure
+        cdk bootstrap --require-approval=never 
+
+    - name: CDK destroy
+      run: |
+        cd infrastructure
+        cdk destroy --all --require-approval=never

@@ -48,7 +48,8 @@ jobs:
     - name: Bootstrap
       run: |
         cd infrastructure
-        cdk bootstrap --require-approval=never
+        cdk bootstrap --require-approval=never || true
+        cat /home/runner/.npm/_logs/*
 
     - name: CDK deploy
       run: |

@@ -1,7 +1,6 @@
 import { Button, Stack } from "@mui/material"
 
-const ERROR_MESSAGE: string = 'Error while retrieving math pyramid data from API. Please try again later.';
-
+export const ERROR_MESSAGE: string = 'Error while retrieving math pyramid data from API. Please try again later.';
 
 type Props = {
     userName: string

@@ -56,6 +56,5 @@ describe("testing MathPyramidField", () => {
     await waitFor(() => {
       expect(screen.getByTestId(`field${index}`)).toHaveClass("correct");
     });
-
   });
 });

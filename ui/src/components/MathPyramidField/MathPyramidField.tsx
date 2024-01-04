@@ -69,6 +69,7 @@ const MathPyramidField: React.FC<Props> = ({
   return (
     <TextField
       className={className}
+      data-testid={`field${index}`}
       inputProps={{ type: "number" }}
       onKeyDown={(event) => {
         // allow only numbers and Backspace

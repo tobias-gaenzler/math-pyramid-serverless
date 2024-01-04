@@ -3,7 +3,6 @@ class ConfigService {
         switch (configVariable) {
             case "WS_URL": {
                 const wsURL = process.env.REACT_APP_WS_URL ?? "ws://127.0.0.1:3002";
-                console.log(wsURL);
                 return wsURL;
             }
             case "PYRAMID_SIZE": {

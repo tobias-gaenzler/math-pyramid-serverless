@@ -57,4 +57,16 @@ describe("testing MathPyramidField", () => {
       expect(screen.getByTestId(`field${index}`)).toHaveClass("correct");
     });
   });
+  test("should call input handler", async () => {
+    const inputHandler = jest.fn();
+    const index: number = 0;
+    const message: string = '{"size":3,"startValues":[null,18,null,25,25,null],"solutionValues":[7,18,7,25,25,50]}';
+    const model: Model = new Model(JSON.parse(message) as MathPyramidModelData);
+    render(<MathPyramidField index={index} model={model} inputHandler={inputHandler} />);
+    const inputField = screen.getByTestId(`field${index}`).querySelector("input");
+
+    act(() => userEvent.type(inputField!, "7"));
+
+    expect(inputHandler).toHaveBeenCalled();
+  });
 });

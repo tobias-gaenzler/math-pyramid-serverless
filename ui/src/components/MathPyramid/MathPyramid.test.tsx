@@ -1,6 +1,5 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MathPyramidModelData, Model } from "../../common/Model";
-import userEvent from '@testing-library/user-event';
 import MathPyramid from "./MathPyramid";
 
 describe("testing MathPyramid", () => {

@@ -58,7 +58,7 @@ const MathPyramidGame: React.FC<{}> = () => {
   };
 
   return showErrorMessage ?
-    (<ErrorMessage userName={userName} restart={restart} />) :
+    (<ErrorMessage restart={restart} />) :
     (<>
       <MathPyramid model={model} inputHandler={inputHandler} />
       <GameSolvedDialog

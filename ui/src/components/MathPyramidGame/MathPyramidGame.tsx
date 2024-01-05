@@ -8,16 +8,16 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { UserNameProvider } from "../../service/UserNameProvider";
 import MathPyramid from "../MathPyramidLayout/MathPyramidLayout";
 import { ConfigService } from "../../service/ConfigService";
+import { WebSocketService } from "../../service/WebSocketService";
 
 const USER_NAME: string = new UserNameProvider().getUserName();
 const WS_URL: string = ConfigService.getConfig("WS_URL");
-const PYRAMID_SIZE: string = ConfigService.getConfig("PYRAMID_SIZE");
-const MAX_VALUE: string = ConfigService.getConfig("MAX_VALUE");
 
 const MathPyramidGame: React.FC<{}> = () => {
   const [model, setModel] = useState<Model | null>();
   const [solvedBy, setSolvedBy] = useState<string>("");
   const [showErrorMessage, setShowErrorMessage] = useState(false);
+
 
   const { sendJsonMessage, lastJsonMessage } = useWebSocket<string>(WS_URL, {
     onOpen: () => {
@@ -34,6 +34,7 @@ const MathPyramidGame: React.FC<{}> = () => {
     share: false,
     shouldReconnect: () => true,
   });
+  const wsService = new WebSocketService(sendJsonMessage, USER_NAME);
 
   useEffect(() => {
     // Execute when a new WebSocket message is received
@@ -73,11 +74,7 @@ const MathPyramidGame: React.FC<{}> = () => {
   };
 
   const restart = () => {
-    sendJsonMessage({
-      action: "start",
-      sender: USER_NAME,
-      data: { size: PYRAMID_SIZE, maxValue: MAX_VALUE },
-    });
+    wsService.sendRestart();
   };
 
   const closePopup = () => {
@@ -85,10 +82,10 @@ const MathPyramidGame: React.FC<{}> = () => {
     setModel(null);
   };
 
-  return showErrorMessage ? (
-    <ErrorMessage userName={USER_NAME} restart={restart} />
-  ) : (
-    <>
+  return showErrorMessage ?
+    (<ErrorMessage userName={USER_NAME} restart={restart} />)
+    :
+    (<>
       <div>
         Player name: <b>{USER_NAME}</b>
       </div>
@@ -102,7 +99,7 @@ const MathPyramidGame: React.FC<{}> = () => {
         {model == null ? "Start" : "Restart"}
       </Button>
     </>
-  );
+    );
 };
 
 export default MathPyramidGame;

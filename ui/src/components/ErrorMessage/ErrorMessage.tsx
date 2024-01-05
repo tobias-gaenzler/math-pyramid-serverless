@@ -1,7 +1,7 @@
 import { Button } from "@mui/material"
 import { useUserNameContext } from "../../context/UserNameContextProvider";
 
-export const ERROR_MESSAGE: string = 'Error while retrieving math pyramid data from API. Please try again later.';
+export const ERROR_MESSAGE: string = "Error while retrieving math pyramid data from API. Please try again later.";
 
 type Props = {
     restart: () => void

@@ -55,7 +55,7 @@ const MathPyramidField: React.FC<Props> = ({
   // initialize field when model changes 
   // useLayoutEffect instead of useEffect, to prevent that field is red (caused by old value)
   useLayoutEffect(() => {
-    let startValue = getStartValue()
+    const startValue = getStartValue()
     setValue(startValue)
     const disabled: boolean = startValue !== ""
     setDisabled(disabled)

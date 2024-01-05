@@ -1,12 +1,12 @@
-import { type ReactElement, StrictMode } from 'react'
-import './App.css'
-import MathPyramidGame from './components/MathPyramidGame/MathPyramidGame'
-import { Stack } from '@mui/material'
-import UserNameContextProvider from './context/UserNameContextProvider'
-import WebSocketContextProvider from './context/WebSocketContextProvider'
-import { UserName } from './components/UserName/UserName'
+import { type ReactElement, StrictMode, JSXElementConstructor } from "react"
+import "./App.css"
+import MathPyramidGame from "./components/MathPyramidGame/MathPyramidGame"
+import { Stack } from "@mui/material"
+import UserNameContextProvider from "./context/UserNameContextProvider"
+import WebSocketContextProvider from "./context/WebSocketContextProvider"
+import { UserName } from "./components/UserName/UserName"
 
-function App(): ReactElement<any, any> {
+function App(): ReactElement<object, JSXElementConstructor<object>> {
   return (
     <StrictMode>
       <UserNameContextProvider>

@@ -9,7 +9,7 @@ import { useUserNameContext } from "../../context/UserNameContextProvider";
 import { useWebSocketContext } from "../../context/WebSocketContextProvider";
 
 
-const MathPyramidGame: React.FC<{}> = () => {
+const MathPyramidGame: React.FC<object> = () => {
   const { userName } = useUserNameContext();
   const [model, setModel] = useState<Model | null>();
   const [solvedBy, setSolvedBy] = useState<string>("");
@@ -20,7 +20,7 @@ const MathPyramidGame: React.FC<{}> = () => {
     if (lastJsonMessage) {
       setShowErrorMessage(false);
       const message = JSON.stringify(lastJsonMessage);
-      if (message.includes('"action":"message"')) {
+      if (message.includes("\"action\":\"message\"")) {
         console.log(`Received message: ${message}`);
         setSolvedBy(JSON.parse(message).sender);
       } else {

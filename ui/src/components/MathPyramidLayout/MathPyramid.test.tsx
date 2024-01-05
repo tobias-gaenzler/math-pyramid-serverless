@@ -5,7 +5,7 @@ import MathPyramid from "./MathPyramidLayout";
 describe("testing MathPyramid", () => {
   test("should render start values and not solution values", () => {
     const inputHandler = jest.fn();
-    const message: string = '{"size":3,"startValues":[null,18,null,25,26,null],"solutionValues":[7,18,8,25,26,51]}';
+    const message: string = "{\"size\":3,\"startValues\":[null,18,null,25,26,null],\"solutionValues\":[7,18,8,25,26,51]}";
     const model: Model = new Model(JSON.parse(message) as MathPyramidModelData);
 
     render(<MathPyramid model={model} inputHandler={inputHandler} />);

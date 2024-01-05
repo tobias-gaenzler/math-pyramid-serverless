@@ -1,11 +1,11 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, TextField } from "@mui/material"
 import { useUserNameContext } from "../../context/UserNameContextProvider";
 import { useRef, useState } from "react";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import { AccountCircle } from "@mui/icons-material";
 
 
-const UserName: React.FC<{}> = () => {
+const UserName: React.FC<object> = () => {
   const { userName, setUserName } = useUserNameContext();
   const [open, setOpen] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);

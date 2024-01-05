@@ -30,7 +30,7 @@ const MathPyramidGame: React.FC<{}> = () => {
         setSolvedBy("");
       }
     }
-  }, [lastJsonMessage]);
+  }, [lastJsonMessage, setShowErrorMessage]);
 
   const inputHandler: MathPyramidFieldHandler = (
     index: number,

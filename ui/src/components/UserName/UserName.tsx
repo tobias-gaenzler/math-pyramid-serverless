@@ -5,10 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { AccountCircle } from "@mui/icons-material";
 
 
-type Props = {
-
-}
-const UserName: React.FC<Props> = ({ }: Props) => {
+const UserName: React.FC<{}> = () => {
   const { userName, setUserName } = useUserNameContext();
   const [open, setOpen] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);

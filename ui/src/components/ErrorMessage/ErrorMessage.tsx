@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mui/material"
+import { Button } from "@mui/material"
 
 export const ERROR_MESSAGE: string = 'Error while retrieving math pyramid data from API. Please try again later.';
 

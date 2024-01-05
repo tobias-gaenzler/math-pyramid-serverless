@@ -13,18 +13,18 @@ const MathPyramidGame: React.FC<{}> = () => {
   const { userName } = useUserNameContext();
   const [model, setModel] = useState<Model | null>();
   const [solvedBy, setSolvedBy] = useState<string>("");
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const { sendJsonMessage, lastJsonMessage, sendRestart } = useWebSocketContext(setShowErrorMessage);
+  const { sendSolvedMessage, lastJsonMessage, sendRestart, showErrorMessage, setShowErrorMessage } = useWebSocketContext();
 
   useEffect(() => {
     // Execute when a new WebSocket message is received
     if (lastJsonMessage) {
       setShowErrorMessage(false);
       const message = JSON.stringify(lastJsonMessage);
-      console.log(`Received message: ${message}`);
       if (message.includes('"action":"message"')) {
+        console.log(`Received message: ${message}`);
         setSolvedBy(JSON.parse(message).sender);
       } else {
+        console.log("Received new model");
         const newModel = new Model(JSON.parse(message) as MathPyramidModelData);
         setModel(newModel);
         setSolvedBy("");
@@ -43,11 +43,7 @@ const MathPyramidGame: React.FC<{}> = () => {
     ) {
       model.userInput[index] = parseInt(inputValue);
       if (model.isSolved()) {
-        sendJsonMessage({
-          action: "message",
-          sender: userName,
-          payload: `Pyramid solved by: ${userName}`,
-        });
+        sendSolvedMessage();
       }
     }
   };
@@ -64,20 +60,21 @@ const MathPyramidGame: React.FC<{}> = () => {
   return showErrorMessage ?
     (<ErrorMessage userName={userName} restart={restart} />)
     :
-    (<>
-      <div>
-        Player name: <b>{userName}</b>
-      </div>
-      <MathPyramid model={model} inputHandler={inputHandler} />
-      <GameSolvedDialog
-        onClose={closePopup}
-        solvedBy={solvedBy}
-        userName={userName}
-      />
-      <Button color="primary" variant="contained" onClick={restart}>
-        {model == null ? "Start" : "Restart"}
-      </Button>
-    </>
+    (
+      <>
+        <div>
+          Player name: <b>{userName}</b>
+        </div>
+        <MathPyramid model={model} inputHandler={inputHandler} />
+        <GameSolvedDialog
+          onClose={closePopup}
+          solvedBy={solvedBy}
+          userName={userName}
+        />
+        <Button color="primary" variant="contained" onClick={restart}>
+          {model == null ? "Start" : "Restart"}
+        </Button>
+      </>
     );
 };
 

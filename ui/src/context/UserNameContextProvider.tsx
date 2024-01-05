@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useRef } from "react";
-import { UserNameProvider } from "../service/UserNameProvider";
+import { Config, names, uniqueNamesGenerator } from "unique-names-generator";
 
 export interface UserNameContextState {
     userName: string;
@@ -11,9 +11,9 @@ export const UserNameContext = createContext<UserNameContextState>(
 
 export const useUserNameContext = () => useContext(UserNameContext);
 
-
 const UserNameContextProvider = (props: { children?: ReactNode }) => {
-    const userNameRef = useRef(new UserNameProvider().getUserName());
+    const config: Config = { dictionaries: [names] };
+    const userNameRef = useRef(uniqueNamesGenerator(config));
 
     return (
         <UserNameContext.Provider value={{ userName: userNameRef.current }}>

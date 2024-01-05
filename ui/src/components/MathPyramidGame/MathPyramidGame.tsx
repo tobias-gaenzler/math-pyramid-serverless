@@ -7,6 +7,7 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MathPyramid from "../MathPyramidLayout/MathPyramidLayout";
 import { useUserNameContext } from "../../context/UserNameContextProvider";
 import { useWebSocketContext } from "../../context/WebSocketContextProvider";
+import { UserName } from "../UserName/UserName";
 
 
 const MathPyramidGame: React.FC<{}> = () => {
@@ -62,9 +63,7 @@ const MathPyramidGame: React.FC<{}> = () => {
     :
     (
       <>
-        <div>
-          Player name: <b>{userName}</b>
-        </div>
+        <UserName></UserName>
         <MathPyramid model={model} inputHandler={inputHandler} />
         <GameSolvedDialog
           onClose={closePopup}

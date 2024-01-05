@@ -1,4 +1,4 @@
-import { Model } from "../../common/Model"
+import { Model } from "../../model/Model"
 import { MathPyramidFieldHandler } from "../MathPyramidField/MathPyramidField"
 import MathPyramidRow from "../MathPyramidRow/MathPyramidRow"
 

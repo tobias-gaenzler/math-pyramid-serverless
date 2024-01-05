@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { MathPyramidModelData, Model } from "../../common/Model";
+import { MathPyramidModelData, Model } from "../../model/Model";
 import MathPyramid from "./MathPyramidLayout";
 
 describe("testing MathPyramid", () => {

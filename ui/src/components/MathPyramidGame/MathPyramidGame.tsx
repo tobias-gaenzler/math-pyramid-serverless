@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MathPyramidFieldHandler } from "../MathPyramidField/MathPyramidField";
 import { Button } from "@mui/material";
 import useWebSocket from "react-use-websocket";
-import { MathPyramidModelData, Model } from "../../common/Model";
+import { MathPyramidModelData, Model } from "../../model/Model";
 import { GameSolvedDialog } from "../GameSolvedDialog/GameSolvedDialog";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { UserNameProvider } from "../../service/UserNameProvider";

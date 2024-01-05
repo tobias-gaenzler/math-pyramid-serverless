@@ -5,15 +5,15 @@ import useWebSocket from "react-use-websocket";
 import { MathPyramidModelData, Model } from "../../model/Model";
 import { GameSolvedDialog } from "../GameSolvedDialog/GameSolvedDialog";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import { UserNameProvider } from "../../service/UserNameProvider";
 import MathPyramid from "../MathPyramidLayout/MathPyramidLayout";
 import { ConfigService } from "../../service/ConfigService";
 import { WebSocketService } from "../../service/WebSocketService";
+import { useUserNameContext } from "../../context/UserNameContextProvider";
 
-const USER_NAME: string = new UserNameProvider().getUserName();
 const WS_URL: string = ConfigService.getConfig("WS_URL");
 
 const MathPyramidGame: React.FC<{}> = () => {
+  const { userName } = useUserNameContext();
   const [model, setModel] = useState<Model | null>();
   const [solvedBy, setSolvedBy] = useState<string>("");
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -24,7 +24,7 @@ const MathPyramidGame: React.FC<{}> = () => {
       console.log("WebSocket connection established");
       sendJsonMessage({
         action: "username",
-        sender: USER_NAME,
+        sender: userName,
       });
     },
     onError: (event: WebSocketEventMap["error"]): void => {
@@ -34,7 +34,7 @@ const MathPyramidGame: React.FC<{}> = () => {
     share: false,
     shouldReconnect: () => true,
   });
-  const wsService = new WebSocketService(sendJsonMessage, USER_NAME);
+  const wsService = new WebSocketService(sendJsonMessage, userName);
 
   useEffect(() => {
     // Execute when a new WebSocket message is received
@@ -66,8 +66,8 @@ const MathPyramidGame: React.FC<{}> = () => {
       if (model.isSolved()) {
         sendJsonMessage({
           action: "message",
-          sender: USER_NAME,
-          payload: `Pyramid solved by: ${USER_NAME}`,
+          sender: userName,
+          payload: `Pyramid solved by: ${userName}`,
         });
       }
     }
@@ -83,17 +83,17 @@ const MathPyramidGame: React.FC<{}> = () => {
   };
 
   return showErrorMessage ?
-    (<ErrorMessage userName={USER_NAME} restart={restart} />)
+    (<ErrorMessage userName={userName} restart={restart} />)
     :
     (<>
       <div>
-        Player name: <b>{USER_NAME}</b>
+        Player name: <b>{userName}</b>
       </div>
       <MathPyramid model={model} inputHandler={inputHandler} />
       <GameSolvedDialog
         onClose={closePopup}
         solvedBy={solvedBy}
-        userName={USER_NAME}
+        userName={userName}
       />
       <Button color="primary" variant="contained" onClick={restart}>
         {model == null ? "Start" : "Restart"}

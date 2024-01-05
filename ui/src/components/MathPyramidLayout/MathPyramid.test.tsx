@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { MathPyramidModelData, Model } from "../../common/Model";
-import MathPyramid from "./MathPyramid";
+import MathPyramid from "./MathPyramidLayout";
 
 describe("testing MathPyramid", () => {
   test("should render start values and not solution values", () => {

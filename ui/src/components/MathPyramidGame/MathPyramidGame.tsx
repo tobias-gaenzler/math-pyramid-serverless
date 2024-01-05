@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Stack from "@mui/material/Stack";
 import { MathPyramidFieldHandler } from "../MathPyramidField/MathPyramidField";
 import { Button } from "@mui/material";
 import useWebSocket from "react-use-websocket";
@@ -7,7 +6,7 @@ import { MathPyramidModelData, Model } from "../../common/Model";
 import { GameSolvedDialog } from "../GameSolvedDialog/GameSolvedDialog";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { UserNameProvider } from "../../service/UserNameProvider";
-import MathPyramid from "../MathPyramid/MathPyramid";
+import MathPyramid from "../MathPyramidLayout/MathPyramidLayout";
 import { ConfigService } from "../../service/ConfigService";
 
 const USER_NAME: string = new UserNameProvider().getUserName();
@@ -89,12 +88,7 @@ const MathPyramidPractice: React.FC<{}> = () => {
   return showErrorMessage ? (
     <ErrorMessage userName={USER_NAME} restart={restart} />
   ) : (
-    <Stack
-      spacing={4}
-      justifyContent="center"
-      alignItems="center"
-      className="math-pyramid"
-    >
+    <>
       <div>
         Player name: <b>{USER_NAME}</b>
       </div>
@@ -107,7 +101,7 @@ const MathPyramidPractice: React.FC<{}> = () => {
       <Button color="primary" variant="contained" onClick={restart}>
         {model == null ? "Start" : "Restart"}
       </Button>
-    </Stack>
+    </>
   );
 };
 

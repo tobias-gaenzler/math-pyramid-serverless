@@ -12,10 +12,7 @@ const ErrorMessage: React.FC<Props> = ({
     restart
 }: Props) => {
     return (
-        <Stack
-            spacing={4}
-            justifyContent="center"
-            alignItems="center">
+        <>
             <div>
                 My name: {userName}
             </div>
@@ -25,7 +22,7 @@ const ErrorMessage: React.FC<Props> = ({
             <Button color="primary" variant="contained" onClick={restart}>
                 Try again
             </Button>
-        </Stack>
+        </>
     )
 }
 

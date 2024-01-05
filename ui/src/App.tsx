@@ -4,6 +4,7 @@ import MathPyramidGame from './components/MathPyramidGame/MathPyramidGame'
 import { Stack } from '@mui/material'
 import UserNameContextProvider from './context/UserNameContextProvider'
 import WebSocketContextProvider from './context/WebSocketContextProvider'
+import { UserName } from './components/UserName/UserName'
 
 function App(): ReactElement<any, any> {
   return (
@@ -16,6 +17,7 @@ function App(): ReactElement<any, any> {
             alignItems="center"
             className="math-pyramid"
           >
+            <UserName />
             <MathPyramidGame />
           </Stack>
         </WebSocketContextProvider>

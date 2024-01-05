@@ -7,7 +7,6 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MathPyramid from "../MathPyramidLayout/MathPyramidLayout";
 import { useUserNameContext } from "../../context/UserNameContextProvider";
 import { useWebSocketContext } from "../../context/WebSocketContextProvider";
-import { UserName } from "../UserName/UserName";
 
 
 const MathPyramidGame: React.FC<{}> = () => {
@@ -25,7 +24,7 @@ const MathPyramidGame: React.FC<{}> = () => {
         console.log(`Received message: ${message}`);
         setSolvedBy(JSON.parse(message).sender);
       } else {
-        console.log("Received new model");
+        console.log("Game started, received new model");
         const newModel = new Model(JSON.parse(message) as MathPyramidModelData);
         setModel(newModel);
         setSolvedBy("");
@@ -59,22 +58,18 @@ const MathPyramidGame: React.FC<{}> = () => {
   };
 
   return showErrorMessage ?
-    (<ErrorMessage userName={userName} restart={restart} />)
-    :
-    (
-      <>
-        <UserName></UserName>
-        <MathPyramid model={model} inputHandler={inputHandler} />
-        <GameSolvedDialog
-          onClose={closePopup}
-          solvedBy={solvedBy}
-          userName={userName}
-        />
-        <Button color="primary" variant="contained" onClick={restart}>
-          {model == null ? "Start" : "Restart"}
-        </Button>
-      </>
-    );
+    (<ErrorMessage userName={userName} restart={restart} />) :
+    (<>
+      <MathPyramid model={model} inputHandler={inputHandler} />
+      <GameSolvedDialog
+        onClose={closePopup}
+        solvedBy={solvedBy}
+        userName={userName}
+      />
+      <Button color="primary" variant="contained" onClick={restart}>
+        {model == null ? "Start" : "Restart"}
+      </Button>
+    </>);
 };
 
 export default MathPyramidGame;

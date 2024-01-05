@@ -59,4 +59,4 @@ jobs:
     - name: CDK destroy
       run: |
         cd infrastructure
-        cdk destroy --all --require-approval=never
+        cdk destroy --all --force

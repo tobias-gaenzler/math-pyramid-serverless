@@ -3,19 +3,22 @@ import './App.css'
 import MathPyramidGame from './components/MathPyramidGame/MathPyramidGame'
 import { Stack } from '@mui/material'
 import UserNameContextProvider from './context/UserNameContextProvider'
+import WebSocketContextProvider from './context/WebSocketContextProvider'
 
 function App(): ReactElement<any, any> {
   return (
     <StrictMode>
       <UserNameContextProvider>
-        <Stack
-          spacing={4}
-          justifyContent="center"
-          alignItems="center"
-          className="math-pyramid"
-        >
-          <MathPyramidGame />
-        </Stack>
+        <WebSocketContextProvider>
+          <Stack
+            spacing={4}
+            justifyContent="center"
+            alignItems="center"
+            className="math-pyramid"
+          >
+            <MathPyramidGame />
+          </Stack>
+        </WebSocketContextProvider>
       </UserNameContextProvider>
     </StrictMode>
   )

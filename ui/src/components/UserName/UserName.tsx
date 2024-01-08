@@ -11,11 +11,18 @@ const UserName: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onSave = () => {
-    if (inputRef.current && inputRef.current.value) {
-      setUserName(inputRef.current!.value);
+    if (inputRef.current?.value) {
+      setUserName(inputRef.current.value);
     }
     setOpen(false);
   }
+  const onClose = () => {
+    if (inputRef.current) {
+      inputRef.current.value = userName;
+    }
+    setOpen(false);
+  }
+
   const editUserName = () => {
     setOpen(true);
   }
@@ -28,7 +35,7 @@ const UserName: React.FC = () => {
       </IconButton>
     </div>
 
-    <Dialog data-testid="userNameDialog" open={open}>
+    <Dialog data-testid="userNameDialog" open={open} onClose={onClose}>
       <DialogTitle id="alert-dialog-title">
         {"Change Player Name"}
       </DialogTitle>
@@ -37,6 +44,7 @@ const UserName: React.FC = () => {
           id="input-with-icon-textfield"
           label="New Player Name"
           inputRef={inputRef}
+          defaultValue={userName}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

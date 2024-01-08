@@ -25,7 +25,8 @@
         "quotes": [
             "error",
             "double"
-        ]
+        ],
+        "arrow-body-style": ["error", "as-needed"]
     },
     "settings": {
         "react": {

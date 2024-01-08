@@ -34,7 +34,7 @@ const UserNameContextProvider = (props: { children?: ReactNode }) => {
     const setUserNameInLocalStorage = (newUserName: string) => {
         setUserName(newUserName);
         ls.set<string>("userName", JSON.stringify(newUserName));
-    }
+    };
 
     return (
         <UserNameContext.Provider value={{ userName: userName, setUserName: setUserNameInLocalStorage }}>

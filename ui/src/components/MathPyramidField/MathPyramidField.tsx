@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react"
-import "./MathPyramidField.css"
-import TextField from "@mui/material/TextField"
-import { Model } from "../../model/Model"
+import React, { useCallback, useEffect, useState } from "react";
+import "./MathPyramidField.css";
+import TextField from "@mui/material/TextField";
+import { Model } from "../../model/Model";
 
 export interface MathPyramidFieldHandler {
   (index: number, inputValue: string): void
@@ -11,7 +11,7 @@ type Props = {
   index: number
   model: Model
   inputHandler: MathPyramidFieldHandler
-}
+};
 
 const MathPyramidField: React.FC<Props> = ({
   index,
@@ -20,15 +20,15 @@ const MathPyramidField: React.FC<Props> = ({
 }: Props) => {
   const getStartValue = useCallback(() => {
     if (model.startValues && model.startValues[index]) {
-      return model.startValues[index]!.toString()
+      return model.startValues[index]!.toString();
     } else {
-      return ""
+      return "";
     }
   }, [model, index]);
 
-  const [value, setValue] = useState<string>(() => getStartValue())
-  const [disabled, setDisabled] = useState<boolean>(value === "")
-  const [className, setClassName] = useState<string>("pyramid-field")
+  const [value, setValue] = useState<string>(() => getStartValue());
+  const [disabled, setDisabled] = useState<boolean>(value === "");
+  const [className, setClassName] = useState<string>("pyramid-field");
 
   // set field color when input changes
   useEffect(() => {
@@ -72,21 +72,21 @@ const MathPyramidField: React.FC<Props> = ({
       onKeyDown={(event) => {
         // allow only numbers and Backspace
         if (!/[0-9]/.test(event.key) && !/Backspace/.test(event.key)) {
-          event.preventDefault()
+          event.preventDefault();
         }
       }}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-        const currentInputValue = event.target.value
-        setValue(currentInputValue)
-        const hasInput = ("" !== currentInputValue)
+        const currentInputValue = event.target.value;
+        setValue(currentInputValue);
+        const hasInput = ("" !== currentInputValue);
         if (hasInput) {
-          inputHandler(index, currentInputValue)
+          inputHandler(index, currentInputValue);
         }
       }}
       value={value}
       disabled={disabled}
     />
-  )
-}
+  );
+};
 
-export default MathPyramidField
+export default MathPyramidField;

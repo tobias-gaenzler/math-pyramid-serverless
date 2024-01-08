@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, TextField } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, TextField } from "@mui/material";
 import { useUserNameContext } from "../../context/UserNameContextProvider";
 import { useRef, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
@@ -15,17 +15,17 @@ const UserName: React.FC = () => {
       setUserName(inputRef.current.value);
     }
     setOpen(false);
-  }
+  };
   const onClose = () => {
     if (inputRef.current) {
       inputRef.current.value = userName;
     }
     setOpen(false);
-  }
+  };
 
   const editUserName = () => {
     setOpen(true);
-  }
+  };
 
   return (<>
     <div>
@@ -61,7 +61,7 @@ const UserName: React.FC = () => {
       </DialogActions>
     </Dialog>
   </>
-  )
-}
+  );
+};
 
-export { UserName }
+export { UserName };

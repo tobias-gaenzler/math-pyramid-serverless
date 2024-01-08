@@ -20,7 +20,7 @@ export const WebSocketContext = createContext<WebSocketContextState>(
     {} as WebSocketContextState
 );
 
-export const useWebSocketContext = () => useContext(WebSocketContext)
+export const useWebSocketContext = () => useContext(WebSocketContext);
 
 const WebSocketContextProvider = (props: { children?: ReactNode }) => {
     const { userName } = useUserNameContext();

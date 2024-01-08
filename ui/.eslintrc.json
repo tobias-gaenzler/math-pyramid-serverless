@@ -26,7 +26,12 @@
             "error",
             "double"
         ],
-        "arrow-body-style": ["error", "as-needed"]
+        "arrow-body-style": [
+            "error",
+            "as-needed"
+        ],
+        "semi": "off",
+        "@typescript-eslint/semi": "error"
     },
     "settings": {
         "react": {

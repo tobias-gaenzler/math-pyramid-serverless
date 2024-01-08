@@ -33,7 +33,7 @@ class Model {
   }
 
   isSolved() {
-    return JSON.stringify(this.solutionValues) === JSON.stringify(this.userInput)
+    return JSON.stringify(this.solutionValues) === JSON.stringify(this.userInput);
   }
 }
 

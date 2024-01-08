@@ -5,12 +5,12 @@ describe("testing ConfigService", () => {
 
   beforeEach(() => {
     jest.resetModules();
-    process.env = { ...OLD_ENV }
-  })
+    process.env = { ...OLD_ENV };
+  });
 
   afterEach(() => {
     process.env = OLD_ENV;
-  })
+  });
 
   test("should throw error on unknown variables", () => {
     const t = () => {

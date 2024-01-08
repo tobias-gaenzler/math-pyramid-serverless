@@ -9,9 +9,9 @@ import { useUserNameContext } from "../../context/UserNameContextProvider";
 import { useWebSocketContext } from "../../context/WebSocketContextProvider";
 
 
-const MathPyramidGame: React.FC<object> = () => {
+const MathPyramidGame: React.FC = () => {
   const { userName } = useUserNameContext();
-  const [model, setModel] = useState<Model | null>();
+  const [model, setModel] = useState<Model | null>(null);
   const [solvedBy, setSolvedBy] = useState<string>("");
   const { sendSolvedMessage, lastJsonMessage, sendRestart, showErrorMessage, setShowErrorMessage } = useWebSocketContext();
 
@@ -36,11 +36,7 @@ const MathPyramidGame: React.FC<object> = () => {
     index: number,
     inputValue: string
   ): void => {
-    if (
-      model &&
-      model.solutionValues &&
-      model.solutionValues[index].toString() === inputValue
-    ) {
+    if (model?.solutionValues && model.solutionValues[index]?.toString() === inputValue) {
       model.userInput[index] = parseInt(inputValue);
       if (model.isSolved()) {
         sendSolvedMessage();

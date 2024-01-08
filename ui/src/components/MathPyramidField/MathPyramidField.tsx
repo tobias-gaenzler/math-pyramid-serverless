@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import "./MathPyramidField.css"
 import TextField from "@mui/material/TextField"
 import { Model } from "../../model/Model"
@@ -19,25 +19,23 @@ const MathPyramidField: React.FC<Props> = ({
   inputHandler,
 }: Props) => {
   const getStartValue = useCallback(() => {
-    if (model.startValues[index]) {
+    if (model.startValues && model.startValues[index]) {
       return model.startValues[index]!.toString()
     } else {
       return ""
     }
   }, [model, index]);
 
-  const [value, setValue] = useState<string>(() => { return getStartValue() })
-  const [disabled, setDisabled] = useState<boolean>(
-    value === "" ? false : true
-  )
+  const [value, setValue] = useState<string>(() => getStartValue())
+  const [disabled, setDisabled] = useState<boolean>(value === "")
   const [className, setClassName] = useState<string>("pyramid-field")
 
   // set field color when input changes
   useEffect(() => {
     if (!model || !model.solutionValues) {
-      return
+      return;
     }
-    const expectsUserInput = (getStartValue() === "");
+    const expectsUserInput = getStartValue() === "";
     if (expectsUserInput) {
       if (value === "") {
         setClassName("pyramid-field");
@@ -50,21 +48,21 @@ const MathPyramidField: React.FC<Props> = ({
     } else {
       setClassName("pyramid-field disabled");
     }
-  }, [model, index, getStartValue, value])
+  }, [model, index, value, getStartValue]);
 
-  // initialize field when model changes 
-  // useLayoutEffect instead of useEffect, to prevent that field is red (caused by old value)
-  useLayoutEffect(() => {
-    const startValue = getStartValue()
-    setValue(startValue)
-    const disabled: boolean = startValue !== ""
-    setDisabled(disabled)
+
+  // initialize field when model changes
+  useEffect(() => {
+    const startValue = getStartValue();
+    setValue(startValue);
+    const disabled = startValue !== "";
+    setDisabled(disabled);
     if (disabled) {
-      setClassName("pyramid-field disabled")
+      setClassName("pyramid-field disabled");
     } else {
-      setClassName("pyramid-field")
+      setClassName("pyramid-field");
     }
-  }, [model, getStartValue])
+  }, [model, getStartValue]);
 
   return (
     <TextField

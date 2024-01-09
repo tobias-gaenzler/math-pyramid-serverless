@@ -1,6 +1,6 @@
 import React from "react";
 import { act, render, screen } from "@testing-library/react";
-import UserNameContextProvider, { useUserNameContext, UserNameContextState, UserNameContext } from "./UserNameContextProvider";
+import UserNameContextProvider, { useUserNameContext, UserNameContext } from "./UserNameContextProvider";
 import { uniqueNamesGenerator } from "unique-names-generator";
 import * as ls from "local-storage";
 
@@ -38,7 +38,6 @@ const renderWithContext = (ui: React.ReactElement) => {
         </UserNameContextProvider>
     );
 };
-const providerProps = { userName: "Robert", setUserName: jest.fn() };
 
 describe("UserNameContextProvider", () => {
     beforeEach(() => {

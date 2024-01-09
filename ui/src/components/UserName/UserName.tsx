@@ -11,7 +11,7 @@ const UserName: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onSave = () => {
-    if (inputRef.current?.value) {
+    if (inputRef.current?.value && inputRef.current?.value !== userName) {
       setUserName(inputRef.current.value);
     }
     setOpen(false);
@@ -30,7 +30,7 @@ const UserName: React.FC = () => {
   return (<>
     <div>
       Player name: <b>{userName}</b>
-      <IconButton aria-label="Edit" onClick={editUserName}>
+      <IconButton data-testid="edit" aria-label="Edit" onClick={editUserName}>
         <EditIcon />
       </IconButton>
     </div>
@@ -44,6 +44,7 @@ const UserName: React.FC = () => {
           id="input-with-icon-textfield"
           label="New Player Name"
           inputRef={inputRef}
+          data-testid="userNameInput"
           defaultValue={userName}
           InputProps={{
             startAdornment: (

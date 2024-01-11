@@ -7,14 +7,12 @@ import * as ls from "local-storage";
 
 // Mock local-storage module
 jest.mock("local-storage", () => {
-    const storage: { [key: string]: any } = {};
+    const storage: { [key: string]: string } = {};
     return {
-        set: (key: string, value: any) => {
+        set: (key: string, value: string) => {
             storage[key] = value;
         },
-        get: (key: string) => {
-            return storage[key];
-        },
+        get: (key: string) => storage[key],
         clear: () => {
             for (const key in storage) {
                 delete storage[key];
@@ -31,13 +29,11 @@ jest.mock("unique-names-generator", () => ({
 }));
 
 // Custom render function to wrap components with the context provider
-const renderWithContext = (ui: React.ReactElement) => {
-    return render(
-        <UserNameContextProvider>
-            {ui}
-        </UserNameContextProvider>
-    );
-};
+const renderWithContext = (ui: React.ReactElement) => render(
+    <UserNameContextProvider>
+        {ui}
+    </UserNameContextProvider>
+);
 
 describe("UserNameContextProvider", () => {
     beforeEach(() => {

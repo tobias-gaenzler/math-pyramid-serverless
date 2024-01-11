@@ -24,7 +24,7 @@ describe("testing UserName component", () => {
     });
 
     test("updates the user name when 'Update' button is clicked", async () => {
-        const result = renderUserNameWithContext();
+        renderUserNameWithContext();
 
         const editButton = screen.getByTestId("edit");
         fireEvent.click(editButton);

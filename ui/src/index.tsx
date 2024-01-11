@@ -7,9 +7,11 @@ const htmlRoot = document.getElementById("root");
 if (htmlRoot == null) {
   throw new Error("No element with id 'root' in html document!");
 }
+
+
 const root = ReactDOM.createRoot(htmlRoot);
 root.render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );

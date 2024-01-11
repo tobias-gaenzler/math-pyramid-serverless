@@ -1,24 +1,24 @@
 import { type ReactElement, JSXElementConstructor } from "react";
 import "./App.css";
-import MathPyramidGame from "./components/MathPyramidGame/MathPyramidGame";
-import { Stack } from "@mui/material";
 import UserNameContextProvider from "./context/UserNameContextProvider";
 import WebSocketContextProvider from "./context/WebSocketContextProvider";
-import { UserName } from "./components/UserName/UserName";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import MainLayout from "./components/MainLayout/MainLayout";
+import routes from "./routes";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: routes
+  }
+]);
 
 function App(): ReactElement<object, JSXElementConstructor<object>> {
   return (
     <UserNameContextProvider>
       <WebSocketContextProvider>
-        <Stack
-          spacing={4}
-          justifyContent="center"
-          alignItems="center"
-          className="math-pyramid"
-        >
-          <UserName />
-          <MathPyramidGame />
-        </Stack>
+        <RouterProvider router={router} />
       </WebSocketContextProvider>
     </UserNameContextProvider>
   );

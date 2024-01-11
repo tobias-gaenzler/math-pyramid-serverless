@@ -1,9 +1,9 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, TextField } from "@mui/material";
 import { useUserNameContext } from "../../context/UserNameContextProvider";
 import { useRef, useState } from "react";
-import EditIcon from "@mui/icons-material/Edit";
 import { AccountCircle } from "@mui/icons-material";
-
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import "./UserName.css";
 
 const UserName: React.FC = () => {
   const { userName, setUserName } = useUserNameContext();
@@ -29,9 +29,9 @@ const UserName: React.FC = () => {
 
   return (<>
     <div>
-      Player name: <b>{userName}</b>
-      <IconButton data-testid="edit" aria-label="Edit" onClick={editUserName}>
-        <EditIcon />
+      <IconButton data-testid="edit" aria-label="Edit" onClick={editUserName} size="large" color="inherit">
+        <AccountCircleOutlinedIcon />
+        <div className="username">{userName}</div>
       </IconButton>
     </div>
 

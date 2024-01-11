@@ -53,6 +53,12 @@ const UserName: React.FC = () => {
               </InputAdornment>
             ),
           }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              onSave();
+              event.preventDefault();
+            }
+          }}
           variant="standard"
         />
       </DialogContent>

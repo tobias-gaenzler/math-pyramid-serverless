@@ -1,4 +1,4 @@
-import { type ReactElement, StrictMode, JSXElementConstructor } from "react";
+import { type ReactElement, JSXElementConstructor } from "react";
 import "./App.css";
 import MathPyramidGame from "./components/MathPyramidGame/MathPyramidGame";
 import { Stack } from "@mui/material";
@@ -8,21 +8,19 @@ import { UserName } from "./components/UserName/UserName";
 
 function App(): ReactElement<object, JSXElementConstructor<object>> {
   return (
-    <StrictMode>
-      <UserNameContextProvider>
-        <WebSocketContextProvider>
-          <Stack
-            spacing={4}
-            justifyContent="center"
-            alignItems="center"
-            className="math-pyramid"
-          >
-            <UserName />
-            <MathPyramidGame />
-          </Stack>
-        </WebSocketContextProvider>
-      </UserNameContextProvider>
-    </StrictMode>
+    <UserNameContextProvider>
+      <WebSocketContextProvider>
+        <Stack
+          spacing={4}
+          justifyContent="center"
+          alignItems="center"
+          className="math-pyramid"
+        >
+          <UserName />
+          <MathPyramidGame />
+        </Stack>
+      </WebSocketContextProvider>
+    </UserNameContextProvider>
   );
 }
 export default App;

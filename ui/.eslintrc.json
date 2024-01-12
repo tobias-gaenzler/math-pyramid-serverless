@@ -30,8 +30,8 @@
             "error",
             "as-needed"
         ],
-        "semi": "off",
-        "@typescript-eslint/semi": "error"
+        "semi": ["error", "never"],
+        "@typescript-eslint/semi": ["error", "never"]
     },
     "settings": {
         "react": {

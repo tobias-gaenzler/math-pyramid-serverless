@@ -1,8 +1,8 @@
-import { Stack } from "@mui/material";
-import { Outlet } from "react-router-dom";
-import { Suspense } from "react";
-import Header from "../Header/Header";
-import "./MainLayout.css";
+import { Stack } from "@mui/material"
+import { Outlet } from "react-router-dom"
+import { Suspense } from "react"
+import Header from "../Header/Header"
+import "./MainLayout.css"
 
 export default function MainLayout() {
     return (
@@ -21,5 +21,5 @@ export default function MainLayout() {
                 </Stack>
             </main>
         </>
-    );
+    )
 }

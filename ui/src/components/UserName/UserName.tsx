@@ -1,31 +1,31 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, TextField } from "@mui/material";
-import { useUserNameContext } from "../../context/UserNameContextProvider";
-import { useRef, useState } from "react";
-import { AccountCircle } from "@mui/icons-material";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import "./UserName.css";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, TextField } from "@mui/material"
+import { useUserNameContext } from "../../context/UserNameContextProvider"
+import { useRef, useState } from "react"
+import { AccountCircle } from "@mui/icons-material"
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined"
+import "./UserName.css"
 
 const UserName: React.FC = () => {
-  const { userName, setUserName } = useUserNameContext();
-  const [open, setOpen] = useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { userName, setUserName } = useUserNameContext()
+  const [open, setOpen] = useState<boolean>(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const onSave = () => {
     if (inputRef.current?.value && inputRef.current?.value !== userName) {
-      setUserName(inputRef.current.value);
+      setUserName(inputRef.current.value)
     }
-    setOpen(false);
-  };
+    setOpen(false)
+  }
   const onClose = () => {
     if (inputRef.current) {
-      inputRef.current.value = userName;
+      inputRef.current.value = userName
     }
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   const editUserName = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
 
   return (<>
     <div>
@@ -55,8 +55,8 @@ const UserName: React.FC = () => {
           }}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
-              onSave();
-              event.preventDefault();
+              onSave()
+              event.preventDefault()
             }
           }}
           variant="standard"
@@ -68,7 +68,7 @@ const UserName: React.FC = () => {
       </DialogActions>
     </Dialog>
   </>
-  );
-};
+  )
+}
 
-export { UserName };
+export { UserName }

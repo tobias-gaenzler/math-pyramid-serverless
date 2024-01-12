@@ -1,57 +1,57 @@
-import React, { useEffect, useState } from "react";
-import { MathPyramidFieldHandler } from "../MathPyramidField/MathPyramidField";
-import { Button } from "@mui/material";
-import { MathPyramidModelData, Model } from "../../model/Model";
-import { GameSolvedDialog } from "../GameSolvedDialog/GameSolvedDialog";
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import MathPyramid from "../MathPyramidLayout/MathPyramidLayout";
-import { useUserNameContext } from "../../context/UserNameContextProvider";
-import { useWebSocketContext } from "../../context/WebSocketContextProvider";
+import React, { useEffect, useState } from "react"
+import { MathPyramidFieldHandler } from "../MathPyramidField/MathPyramidField"
+import { Button } from "@mui/material"
+import { MathPyramidModelData, Model } from "../../model/Model"
+import { GameSolvedDialog } from "../GameSolvedDialog/GameSolvedDialog"
+import ErrorMessage from "../ErrorMessage/ErrorMessage"
+import MathPyramid from "../MathPyramidLayout/MathPyramidLayout"
+import { useUserNameContext } from "../../context/UserNameContextProvider"
+import { useWebSocketContext } from "../../context/WebSocketContextProvider"
 
 
 const MathPyramidGame: React.FC = () => {
-  const { userName } = useUserNameContext();
-  const [model, setModel] = useState<Model | null>(null);
-  const [solvedBy, setSolvedBy] = useState<string>("");
-  const { sendSolvedMessage, lastJsonMessage, sendRestart, showErrorMessage, setShowErrorMessage } = useWebSocketContext();
+  const { userName } = useUserNameContext()
+  const [model, setModel] = useState<Model | null>(null)
+  const [solvedBy, setSolvedBy] = useState<string>("")
+  const { sendSolvedMessage, lastJsonMessage, sendRestart, showErrorMessage, setShowErrorMessage } = useWebSocketContext()
 
   useEffect(() => {
     // Execute when a new WebSocket message is received
     if (lastJsonMessage) {
-      setShowErrorMessage(false);
-      const message = JSON.stringify(lastJsonMessage);
+      setShowErrorMessage(false)
+      const message = JSON.stringify(lastJsonMessage)
       if (message.includes("\"action\":\"message\"")) {
-        console.log(`Received message: ${message}`);
-        setSolvedBy(JSON.parse(message).sender);
+        console.log(`Received message: ${message}`)
+        setSolvedBy(JSON.parse(message).sender)
       } else {
-        console.log("Game started, received new model");
-        const newModel = new Model(JSON.parse(message) as MathPyramidModelData);
-        setModel(newModel);
-        setSolvedBy("");
+        console.log("Game started, received new model")
+        const newModel = new Model(JSON.parse(message) as MathPyramidModelData)
+        setModel(newModel)
+        setSolvedBy("")
       }
     }
-  }, [lastJsonMessage, setShowErrorMessage]);
+  }, [lastJsonMessage, setShowErrorMessage])
 
   const inputHandler: MathPyramidFieldHandler = (
     index: number,
     inputValue: string
   ): void => {
     if (model?.solutionValues && model.solutionValues[index]?.toString() === inputValue) {
-      model.userInput[index] = parseInt(inputValue);
+      model.userInput[index] = parseInt(inputValue)
       if (model.isSolved()) {
-        sendSolvedMessage();
+        sendSolvedMessage()
       }
     }
-  };
+  }
 
   const restart = () => {
-    sendRestart();
-  };
+    sendRestart()
+  }
 
   const closePopup = () => {
-    setSolvedBy("");
-    setModel(null);
-  };
+    setSolvedBy("")
+    setModel(null)
+  }
 
   return showErrorMessage ?
     (<ErrorMessage restart={restart} />) :
@@ -65,7 +65,7 @@ const MathPyramidGame: React.FC = () => {
       <Button color="primary" variant="contained" onClick={restart}>
         {model == null ? "Start" : "Restart"}
       </Button>
-    </>);
-};
+    </>)
+}
 
-export default MathPyramidGame;
+export default MathPyramidGame

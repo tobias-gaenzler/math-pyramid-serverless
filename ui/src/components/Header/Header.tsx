@@ -1,16 +1,16 @@
-import React from "react";
-import "./Header.css";
+import React from "react"
+import "./Header.css"
 import {
     AppBar,
     Toolbar,
     Typography,
     IconButton,
-} from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import PathConstants from "../../routes/pathConstants";
-import { UserName } from "../UserName/UserName";
-import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
+} from "@mui/material"
+import { Link as RouterLink } from "react-router-dom"
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
+import PathConstants from "../../routes/pathConstants"
+import { UserName } from "../UserName/UserName"
+import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined"
 
 const Header: React.FC = () => (
     <AppBar position="static">
@@ -53,6 +53,6 @@ const Header: React.FC = () => (
             </IconButton>
         </Toolbar>
     </AppBar>
-);
+)
 
-export default Header;
+export default Header

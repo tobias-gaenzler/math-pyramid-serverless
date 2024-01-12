@@ -1,10 +1,10 @@
-import { Button } from "@mui/material";
+import { Button } from "@mui/material"
 
-export const ERROR_MESSAGE: string = "Error while retrieving math pyramid data from API. Please try again later.";
+export const ERROR_MESSAGE: string = "Error while retrieving math pyramid data from API. Please try again later."
 
 type Props = {
     restart: () => void
-};
+}
 
 const ErrorMessage: React.FC<Props> = ({
     restart
@@ -17,6 +17,6 @@ const ErrorMessage: React.FC<Props> = ({
                 Try again
             </Button>
         </>
-    );
+    )
 
-export default ErrorMessage;
+export default ErrorMessage

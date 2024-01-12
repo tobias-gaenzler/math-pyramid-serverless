@@ -1,5 +1,5 @@
-import { Container } from "@mui/material";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { Container } from "@mui/material"
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
 
 function HelpView() {
   return (
@@ -57,7 +57,7 @@ function HelpView() {
         Tutorial (german)
       </a>
     </Container>
-  );
+  )
 }
 
-export default HelpView;
+export default HelpView
